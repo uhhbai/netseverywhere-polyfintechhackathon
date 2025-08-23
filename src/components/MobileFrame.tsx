@@ -35,4 +35,4 @@ const MobileFrame = ({ children }: MobileFrameProps) => {
   );
 };
 
-export default MobileFrame;
+export default MobileFrame; // Fixed export
