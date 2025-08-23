@@ -33,11 +33,6 @@ const BottomNavigation = () => {
           );
         })}
       </div>
-      
-      {/* Home indicator */}
-      <div className="flex justify-center pb-2">
-        <div className="w-32 h-1 bg-foreground/20 rounded-full"></div>
-      </div>
     </div>
   );
 };
