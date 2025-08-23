@@ -1,21 +1,32 @@
-import { ArrowLeft, Bell, User } from 'lucide-react';
+import React from 'react';
+import { ArrowLeft, Bell, User, LogOut } from 'lucide-react';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface HeaderProps {
   title: string;
   showBack?: boolean;
-  onBackClick?: () => void;
+  onBack?: () => void;
 }
 
-const Header = ({ title, showBack = false, onBackClick }: HeaderProps) => {
+const Header = ({ title, showBack = false, onBack }: HeaderProps) => {
+  const { signOut } = useAuth();
+
   return (
     <header className="bg-surface px-6 py-4 flex items-center justify-between border-b border-card-border">
       <div className="flex items-center gap-3">
-        {showBack && (
+        {showBack ? (
           <button 
-            onClick={onBackClick}
+            onClick={onBack}
             className="p-2 -ml-2 rounded-xl hover:bg-hover transition-colors"
           >
             <ArrowLeft size={20} className="text-primary" />
+          </button>
+        ) : (
+          <button 
+            onClick={signOut}
+            className="p-2 -ml-2 rounded-xl hover:bg-hover transition-colors"
+          >
+            <LogOut size={20} className="text-primary" />
           </button>
         )}
         <h1 className="text-lg font-semibold text-foreground">{title}</h1>
