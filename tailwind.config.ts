@@ -29,6 +29,11 @@ export default {
 				surface: 'hsl(var(--surface))',
 				'surface-secondary': 'hsl(var(--surface-secondary))',
 				
+				// Essential Tailwind colors (for @apply directives)
+				border: 'hsl(var(--card-border))',
+				input: 'hsl(var(--card-border))',
+				ring: 'hsl(var(--primary))',
+				
 				// Card system
 				card: {
 					DEFAULT: 'hsl(var(--card))',
