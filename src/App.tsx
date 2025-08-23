@@ -9,6 +9,16 @@ import Auth from "./pages/Auth";
 import Receipts from "./pages/Receipts";
 import GroupPay from "./pages/GroupPay";
 import Promos from "./pages/Promos";
+import Streak from "./pages/Streak";
+import Leaderboard from "./pages/Leaderboard";
+import Cashback from "./pages/Cashback";
+import Badges from "./pages/Badges";
+import Analytics from "./pages/Analytics";
+import Challenges from "./pages/Challenges";
+import Gifting from "./pages/Gifting";
+import Referrals from "./pages/Referrals";
+import Scanning from "./pages/Scanning";
+import NETSClick from "./pages/NETSClick";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -26,6 +36,16 @@ const App = () => (
             <Route path="/receipts" element={<Receipts />} />
             <Route path="/grouppay" element={<GroupPay />} />
             <Route path="/promos" element={<Promos />} />
+            <Route path="/streak" element={<Streak />} />
+            <Route path="/leaderboard" element={<Leaderboard />} />
+            <Route path="/cashback" element={<Cashback />} />
+            <Route path="/badges" element={<Badges />} />
+            <Route path="/analytics" element={<Analytics />} />
+            <Route path="/challenges" element={<Challenges />} />
+            <Route path="/gifting" element={<Gifting />} />
+            <Route path="/referrals" element={<Referrals />} />
+            <Route path="/scanning" element={<Scanning />} />
+            <Route path="/netsclick" element={<NETSClick />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
