@@ -14,7 +14,390 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      challenges: {
+        Row: {
+          challenge_type: string
+          created_at: string | null
+          description: string | null
+          end_date: string | null
+          id: string
+          is_active: boolean | null
+          reward_amount: number | null
+          reward_points: number | null
+          start_date: string | null
+          target_value: number
+          title: string
+        }
+        Insert: {
+          challenge_type: string
+          created_at?: string | null
+          description?: string | null
+          end_date?: string | null
+          id?: string
+          is_active?: boolean | null
+          reward_amount?: number | null
+          reward_points?: number | null
+          start_date?: string | null
+          target_value: number
+          title: string
+        }
+        Update: {
+          challenge_type?: string
+          created_at?: string | null
+          description?: string | null
+          end_date?: string | null
+          id?: string
+          is_active?: boolean | null
+          reward_amount?: number | null
+          reward_points?: number | null
+          start_date?: string | null
+          target_value?: number
+          title?: string
+        }
+        Relationships: []
+      }
+      group_pay_participants: {
+        Row: {
+          amount_owed: number
+          amount_paid: number | null
+          created_at: string | null
+          id: string
+          participant_name: string | null
+          session_id: string
+          status: string | null
+          user_id: string | null
+        }
+        Insert: {
+          amount_owed: number
+          amount_paid?: number | null
+          created_at?: string | null
+          id?: string
+          participant_name?: string | null
+          session_id: string
+          status?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          amount_owed?: number
+          amount_paid?: number | null
+          created_at?: string | null
+          id?: string
+          participant_name?: string | null
+          session_id?: string
+          status?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "group_pay_participants_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "group_pay_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      group_pay_sessions: {
+        Row: {
+          created_at: string | null
+          creator_id: string
+          expires_at: string | null
+          id: string
+          session_name: string
+          split_method: string | null
+          status: string | null
+          total_amount: number
+        }
+        Insert: {
+          created_at?: string | null
+          creator_id: string
+          expires_at?: string | null
+          id?: string
+          session_name: string
+          split_method?: string | null
+          status?: string | null
+          total_amount: number
+        }
+        Update: {
+          created_at?: string | null
+          creator_id?: string
+          expires_at?: string | null
+          id?: string
+          session_name?: string
+          split_method?: string | null
+          status?: string | null
+          total_amount?: number
+        }
+        Relationships: []
+      }
+      notifications: {
+        Row: {
+          action_url: string | null
+          created_at: string | null
+          id: string
+          is_read: boolean | null
+          message: string
+          notification_type: string | null
+          title: string
+          user_id: string
+        }
+        Insert: {
+          action_url?: string | null
+          created_at?: string | null
+          id?: string
+          is_read?: boolean | null
+          message: string
+          notification_type?: string | null
+          title: string
+          user_id: string
+        }
+        Update: {
+          action_url?: string | null
+          created_at?: string | null
+          id?: string
+          is_read?: boolean | null
+          message?: string
+          notification_type?: string | null
+          title?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          balance: number | null
+          created_at: string | null
+          display_name: string | null
+          id: string
+          last_activity_date: string | null
+          phone_number: string | null
+          streak_count: number | null
+          total_spent: number | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          balance?: number | null
+          created_at?: string | null
+          display_name?: string | null
+          id?: string
+          last_activity_date?: string | null
+          phone_number?: string | null
+          streak_count?: number | null
+          total_spent?: number | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          avatar_url?: string | null
+          balance?: number | null
+          created_at?: string | null
+          display_name?: string | null
+          id?: string
+          last_activity_date?: string | null
+          phone_number?: string | null
+          streak_count?: number | null
+          total_spent?: number | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      promos: {
+        Row: {
+          created_at: string | null
+          current_uses: number | null
+          description: string | null
+          discount_amount: number | null
+          discount_percentage: number | null
+          id: string
+          image_url: string | null
+          is_active: boolean | null
+          max_uses: number | null
+          merchant_name: string | null
+          promo_code: string | null
+          title: string
+          valid_until: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          current_uses?: number | null
+          description?: string | null
+          discount_amount?: number | null
+          discount_percentage?: number | null
+          id?: string
+          image_url?: string | null
+          is_active?: boolean | null
+          max_uses?: number | null
+          merchant_name?: string | null
+          promo_code?: string | null
+          title: string
+          valid_until?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          current_uses?: number | null
+          description?: string | null
+          discount_amount?: number | null
+          discount_percentage?: number | null
+          id?: string
+          image_url?: string | null
+          is_active?: boolean | null
+          max_uses?: number | null
+          merchant_name?: string | null
+          promo_code?: string | null
+          title?: string
+          valid_until?: string | null
+        }
+        Relationships: []
+      }
+      referrals: {
+        Row: {
+          completed_at: string | null
+          created_at: string | null
+          id: string
+          referee_email: string | null
+          referee_id: string | null
+          referral_code: string
+          referrer_id: string
+          reward_amount: number | null
+          status: string | null
+        }
+        Insert: {
+          completed_at?: string | null
+          created_at?: string | null
+          id?: string
+          referee_email?: string | null
+          referee_id?: string | null
+          referral_code: string
+          referrer_id: string
+          reward_amount?: number | null
+          status?: string | null
+        }
+        Update: {
+          completed_at?: string | null
+          created_at?: string | null
+          id?: string
+          referee_email?: string | null
+          referee_id?: string | null
+          referral_code?: string
+          referrer_id?: string
+          reward_amount?: number | null
+          status?: string | null
+        }
+        Relationships: []
+      }
+      transactions: {
+        Row: {
+          amount: number
+          created_at: string | null
+          description: string | null
+          group_pay_session_id: string | null
+          id: string
+          merchant_name: string
+          receipt_url: string | null
+          status: string | null
+          transaction_type: string
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string | null
+          description?: string | null
+          group_pay_session_id?: string | null
+          id?: string
+          merchant_name: string
+          receipt_url?: string | null
+          status?: string | null
+          transaction_type: string
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string | null
+          description?: string | null
+          group_pay_session_id?: string | null
+          id?: string
+          merchant_name?: string
+          receipt_url?: string | null
+          status?: string | null
+          transaction_type?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_challenge_progress: {
+        Row: {
+          challenge_id: string
+          completed_at: string | null
+          created_at: string | null
+          current_progress: number | null
+          id: string
+          is_completed: boolean | null
+          user_id: string
+        }
+        Insert: {
+          challenge_id: string
+          completed_at?: string | null
+          created_at?: string | null
+          current_progress?: number | null
+          id?: string
+          is_completed?: boolean | null
+          user_id: string
+        }
+        Update: {
+          challenge_id?: string
+          completed_at?: string | null
+          created_at?: string | null
+          current_progress?: number | null
+          id?: string
+          is_completed?: boolean | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_challenge_progress_challenge_id_fkey"
+            columns: ["challenge_id"]
+            isOneToOne: false
+            referencedRelation: "challenges"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_promo_usage: {
+        Row: {
+          id: string
+          promo_id: string
+          savings_amount: number | null
+          used_at: string | null
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          promo_id: string
+          savings_amount?: number | null
+          used_at?: string | null
+          user_id: string
+        }
+        Update: {
+          id?: string
+          promo_id?: string
+          savings_amount?: number | null
+          used_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_promo_usage_promo_id_fkey"
+            columns: ["promo_id"]
+            isOneToOne: false
+            referencedRelation: "promos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
