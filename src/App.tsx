@@ -23,6 +23,7 @@ import Profile from "./pages/Profile";
 import ReceiptDetails from "./pages/ReceiptDetails";
 import SharedOrders from "./pages/SharedOrders";
 import NotFound from "./pages/NotFound";
+import MyQr from "./pages/MyQr";
 
 const queryClient = new QueryClient();
 
@@ -48,6 +49,7 @@ const App = () => (
             <Route path="/gifting" element={<Gifting />} />
             <Route path="/referrals" element={<Referrals />} />
             <Route path="/scanning" element={<Scanning />} />
+            <Route path="/myqr" element={<MyQr />} />
             <Route path="/netsclick" element={<NETSClick />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/receipt-details/:sessionId" element={<ReceiptDetails />} />

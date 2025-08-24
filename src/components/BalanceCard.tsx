@@ -72,7 +72,7 @@ const BalanceCard = () => {
           </button>
           <button 
             className="flex flex-col items-center gap-2"
-            onClick={() => navigate('/netsclick')}
+            onClick={() => navigate('/myqr')}
           >
             <div className="w-6 h-6 flex items-center justify-center">
               <QrCode size={20} className="text-white" />

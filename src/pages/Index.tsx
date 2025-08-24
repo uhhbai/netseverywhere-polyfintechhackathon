@@ -157,13 +157,13 @@ const Index = () => {
 
   return (
     <MobileFrame>
-      <Header title="NETS for All" />
+      <Header title="NETSEverywhere" />
       
       {/* NETS Everywhere Branding */}
       <div className="bg-gradient-primary p-6">
         <div className="text-center text-white">
           <h2 className="text-2xl font-bold mb-2">NETS Everywhere</h2>
-          <p className="text-sm opacity-90">Your digital wallet for everything</p>
+          <p className="text-sm opacity-90">Your one stop for all things NETS</p>
         </div>
       </div>
 

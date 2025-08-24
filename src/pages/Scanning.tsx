@@ -9,6 +9,7 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
+import { useNavigate } from 'react-router-dom';
 
 interface RecentScan {
   id: string;
@@ -24,6 +25,7 @@ const Scanning = () => {
   const [isScanning, setIsScanning] = useState(false);
   const [recentScans, setRecentScans] = useState<RecentScan[]>([]);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (user) {
@@ -174,6 +176,7 @@ const Scanning = () => {
             <Button 
               variant="ghost" 
               className="w-full h-20 flex-col gap-2"
+              onClick={() => navigate('../myqr')}
             >
               <CreditCard className="text-secondary" size={32} />
               <span className="text-sm font-medium">My QR</span>
