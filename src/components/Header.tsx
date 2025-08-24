@@ -21,8 +21,6 @@ const Header = ({ title, showBack = false, onBack }: HeaderProps) => {
   useEffect(() => {
     if (user) {
       fetchUnreadCount();
-      // Add sample notifications for current user if none exist
-      addSampleNotifications();
     }
   }, [user]);
 
@@ -41,70 +39,6 @@ const Header = ({ title, showBack = false, onBack }: HeaderProps) => {
     }
   };
 
-  const addSampleNotifications = async () => {
-    try {
-      // Check if user already has notifications
-      const { data: existing } = await supabase
-        .from('notifications')
-        .select('id')
-        .eq('user_id', user?.id)
-        .limit(1);
-
-      if (existing && existing.length > 0) return; // User already has notifications
-
-      // Add sample notifications
-      const sampleNotifications = [
-        {
-          user_id: user?.id,
-          title: 'Payment Received',
-          message: 'You received $50.00 from Alex Chen for dinner split',
-          notification_type: 'payment',
-          action_url: '/transactions',
-          is_read: false
-        },
-        {
-          user_id: user?.id,
-          title: 'GroupPay Request',
-          message: 'Sarah Tan invited you to split the bill for Birthday Celebration',
-          notification_type: 'grouppay',
-          action_url: '/grouppay',
-          is_read: false
-        },
-        {
-          user_id: user?.id,
-          title: 'Cashback Earned',
-          message: 'You earned $2.50 cashback from your Starbucks purchase',
-          notification_type: 'cashback',
-          action_url: '/cashback',
-          is_read: true
-        },
-        {
-          user_id: user?.id,
-          title: 'Streak Achievement',
-          message: 'Congratulations! You\'ve reached a 12-day payment streak 🔥',
-          notification_type: 'achievement',
-          action_url: '/streak',
-          is_read: true
-        },
-        {
-          user_id: user?.id,
-          title: 'Referral Bonus',
-          message: 'Your friend Mike joined NETS! You both received $10 bonus',
-          notification_type: 'referral',
-          action_url: '/referrals',
-          is_read: false
-        }
-      ];
-
-      await supabase
-        .from('notifications')
-        .insert(sampleNotifications);
-
-      fetchUnreadCount(); // Refresh count
-    } catch (error) {
-      console.error('Error adding sample notifications:', error);
-    }
-  };
 
   const handleBack = () => {
     if (onBack) {
