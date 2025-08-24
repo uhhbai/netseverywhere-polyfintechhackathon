@@ -27,7 +27,7 @@ const MobileFrame = ({ children }: MobileFrameProps) => {
         </div>
         
         {/* App Content */}
-        <div className="bg-background min-h-[700px]">
+        <div className="bg-background min-h-[700px] max-h-[700px] overflow-y-auto">
           {children}
         </div>
       </div>

@@ -31,6 +31,9 @@ const Leaderboard = () => {
     try {
       const orderBy = activeTab === 'streak' ? 'streak_count' : 'total_spent';
       
+      // First, ensure demo users are seeded
+      await supabase.rpc('seed_demo_users');
+      
       const { data: profiles } = await supabase
         .from('profiles')
         .select('user_id, display_name, streak_count, total_spent')

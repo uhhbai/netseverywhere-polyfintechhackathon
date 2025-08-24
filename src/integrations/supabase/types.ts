@@ -102,30 +102,42 @@ export type Database = {
           created_at: string | null
           creator_id: string
           expires_at: string | null
+          gst_amount: number | null
           id: string
+          receipt_items: Json | null
+          service_charge: number | null
           session_name: string
           split_method: string | null
           status: string | null
+          subtotal: number | null
           total_amount: number
         }
         Insert: {
           created_at?: string | null
           creator_id: string
           expires_at?: string | null
+          gst_amount?: number | null
           id?: string
+          receipt_items?: Json | null
+          service_charge?: number | null
           session_name: string
           split_method?: string | null
           status?: string | null
+          subtotal?: number | null
           total_amount: number
         }
         Update: {
           created_at?: string | null
           creator_id?: string
           expires_at?: string | null
+          gst_amount?: number | null
           id?: string
+          receipt_items?: Json | null
+          service_charge?: number | null
           session_name?: string
           split_method?: string | null
           status?: string | null
+          subtotal?: number | null
           total_amount?: number
         }
         Relationships: []
@@ -252,6 +264,44 @@ export type Database = {
           valid_until?: string | null
         }
         Relationships: []
+      }
+      receipt_items: {
+        Row: {
+          created_at: string | null
+          id: string
+          item_name: string
+          price: number
+          quantity: number | null
+          selected_by_users: string[] | null
+          session_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          item_name: string
+          price: number
+          quantity?: number | null
+          selected_by_users?: string[] | null
+          session_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          item_name?: string
+          price?: number
+          quantity?: number | null
+          selected_by_users?: string[] | null
+          session_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "receipt_items_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "group_pay_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       referrals: {
         Row: {
@@ -403,7 +453,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      seed_demo_users: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
     }
     Enums: {
       [_ in never]: never

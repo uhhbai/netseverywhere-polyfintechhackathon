@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
-import { Users, Plus, DollarSign, Clock } from 'lucide-react';
+import { Users, Plus, DollarSign, Clock, Receipt, Share } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
@@ -20,6 +20,10 @@ interface GroupPaySession {
   status: string;
   created_at: string;
   participants_count?: number;
+  subtotal?: number | null;
+  gst_amount?: number | null;
+  service_charge?: number | null;
+  receipt_items?: any[] | null;
 }
 
 const GroupPay = () => {
@@ -50,7 +54,15 @@ const GroupPay = () => {
       if (error) throw error;
       
       const sessionsWithCount = data?.map(session => ({
-        ...session,
+        id: session.id,
+        session_name: session.session_name,
+        total_amount: session.total_amount,
+        status: session.status,
+        created_at: session.created_at,
+        subtotal: session.subtotal,
+        gst_amount: session.gst_amount,
+        service_charge: session.service_charge,
+        receipt_items: session.receipt_items as any[] | null,
         participants_count: session.group_pay_participants?.[0]?.count || 0
       })) || [];
       
@@ -66,18 +78,36 @@ const GroupPay = () => {
     if (!sessionName || !totalAmount || !user) return;
 
     try {
+      const amount = parseFloat(totalAmount);
+      const subtotal = amount * 0.9; // Assuming 10% taxes/charges
+      const gst_amount = subtotal * 0.07; // 7% GST
+      const service_charge = subtotal * 0.1; // 10% service charge
+      
       const { data, error } = await supabase
         .from('group_pay_sessions')
         .insert({
           creator_id: user.id,
           session_name: sessionName,
-          total_amount: parseFloat(totalAmount),
+          total_amount: amount,
+          subtotal: subtotal,
+          gst_amount: gst_amount,
+          service_charge: service_charge,
           expires_at: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString() // 24 hours
         })
         .select()
         .single();
 
       if (error) throw error;
+
+      // Add sample receipt items for demo
+      if (sessionName.toLowerCase().includes('din tai fung')) {
+        await supabase.from('receipt_items').insert([
+          { session_id: data.id, item_name: 'Xiaolongbao (8 pcs)', price: 8.50, quantity: 2 },
+          { session_id: data.id, item_name: 'Beef Noodle Soup', price: 12.80 },
+          { session_id: data.id, item_name: 'Fried Rice', price: 11.20 },
+          { session_id: data.id, item_name: 'Jasmine Tea', price: 4.50, quantity: 2 }
+        ]);
+      }
 
       toast({
         title: "Session Created!",
@@ -216,13 +246,38 @@ const GroupPay = () => {
                     <Clock className="h-4 w-4" />
                     Created {new Date(session.created_at).toLocaleDateString()}
                   </div>
-                  <div className="flex gap-2 pt-2">
-                    <Button variant="outline" size="sm" className="flex-1">
-                      Manage
-                    </Button>
-                    <Button variant="outline" size="sm" className="flex-1">
-                      Share Link
-                    </Button>
+                  <div className="space-y-2">
+                    {(session.subtotal || session.gst_amount) && (
+                      <div className="text-xs text-muted-foreground space-y-1">
+                        <div className="flex justify-between">
+                          <span>Subtotal:</span>
+                          <span>${(session.subtotal || 0).toFixed(2)}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span>GST (7%):</span>
+                          <span>${(session.gst_amount || 0).toFixed(2)}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span>Service (10%):</span>
+                          <span>${(session.service_charge || 0).toFixed(2)}</span>
+                        </div>
+                      </div>
+                    )}
+                    <div className="flex gap-2 pt-2">
+                      <Button 
+                        variant="outline" 
+                        size="sm" 
+                        className="flex-1"
+                        onClick={() => navigate(`/receipt-details?session=${session.id}`)}
+                      >
+                        <Receipt size={14} className="mr-1" />
+                        View Receipt
+                      </Button>
+                      <Button variant="default" size="sm" className="flex-1">
+                        <Share size={14} className="mr-1" />
+                        Share Link
+                      </Button>
+                    </div>
                   </div>
                 </div>
               </CardContent>

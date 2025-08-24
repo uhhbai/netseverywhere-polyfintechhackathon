@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { User, CreditCard, Bell, Shield, LogOut, Edit, Award, Settings } from 'lucide-react';
+import { User, CreditCard, Bell, Shield, LogOut, Edit, Award, Settings, Share2, Gift, Users, Receipt } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import MobileFrame from '@/components/MobileFrame';
@@ -322,6 +322,41 @@ const Profile = () => {
             </Button>
             <Button variant="outline" className="w-full justify-start">
               Download My Data
+            </Button>
+          </div>
+        </Card>
+
+        {/* More Features */}
+        <Card className="p-6">
+          <div className="flex items-center gap-3 mb-4">
+            <Gift className="text-primary" size={24} />
+            <h3 className="text-lg font-semibold">More Features</h3>
+          </div>
+          
+          <div className="space-y-3">
+            <Button 
+              variant="outline" 
+              className="w-full justify-start"
+              onClick={() => navigate('/referrals')}
+            >
+              <Share2 size={16} className="mr-2" />
+              Referral Program - Earn $10
+            </Button>
+            <Button 
+              variant="outline" 
+              className="w-full justify-start"
+              onClick={() => navigate('/grouppay')}
+            >
+              <Users size={16} className="mr-2" />
+              Group Pay Sessions
+            </Button>
+            <Button 
+              variant="outline" 
+              className="w-full justify-start"
+              onClick={() => navigate('/receipts')}
+            >
+              <Receipt size={16} className="mr-2" />
+              My Receipts
             </Button>
           </div>
         </Card>

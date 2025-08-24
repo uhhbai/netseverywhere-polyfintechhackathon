@@ -7,7 +7,7 @@ import Header from '@/components/Header';
 import BalanceCard from '@/components/BalanceCard';
 import BottomNavigation from '@/components/BottomNavigation';
 import { Card, CardContent } from '@/components/ui/card';
-import { Users, Gift, TrendingUp, Star, Zap, Target } from 'lucide-react';
+import { Users, Gift, TrendingUp, Star, Zap, Target, Receipt } from 'lucide-react';
 
 const Index = () => {
   const { user, loading } = useAuth();
@@ -19,7 +19,7 @@ const Index = () => {
     }
   }, [user, loading, navigate]);
 
-  // Seed realistic demo data for the current user (runs once)
+  // Seed comprehensive demo data for the current user (runs once)
   const seedFakeData = async () => {
     try {
       // 1) Ensure profile exists and has balance
@@ -32,7 +32,7 @@ const Index = () => {
       if (!existingProfile) {
         await supabase.from('profiles').insert({
           user_id: user?.id,
-          display_name: user?.email || 'User',
+          display_name: user?.email?.split('@')[0] || 'User',
           balance: 850.75,
           total_spent: 2500.0,
           streak_count: 12
@@ -50,10 +50,10 @@ const Index = () => {
         .select('*', { count: 'exact', head: true })
         .eq('user_id', user?.id);
 
-      if (!txnCount || txnCount < 6) {
-        const merchants = ['Starbucks', "McDonald's", 'NTUC FairPrice', 'Din Tai Fung', 'Grab Transport', 'Uniqlo'];
-        const amounts = [8.5, 12.9, 45.3, 68.4, 15.6, 89.9];
-        const descriptions = ['Coffee and pastry', 'Lunch meal', 'Grocery shopping', 'Dinner with friends', 'Ride to office', 'New shirt'];
+      if (!txnCount || txnCount < 8) {
+        const merchants = ['Starbucks', "McDonald's", 'NTUC FairPrice', 'Din Tai Fung', 'Grab Transport', 'Uniqlo', 'Ya Kun Kaya Toast', 'Watsons'];
+        const amounts = [8.50, 12.90, 45.30, 68.40, 15.60, 89.90, 7.20, 24.50];
+        const descriptions = ['Coffee and pastry', 'Lunch meal', 'Grocery shopping', 'Dinner with friends', 'Ride to office', 'New shirt', 'Breakfast set', 'Personal care items'];
         const now = Date.now();
         const demo = merchants.map((m, i) => ({
           user_id: user?.id,
@@ -61,10 +61,74 @@ const Index = () => {
           amount: amounts[i],
           transaction_type: 'payment',
           description: descriptions[i],
-          created_at: new Date(now - (i + 2) * 60 * 60 * 1000).toISOString()
+          created_at: new Date(now - (i + 1) * 3 * 60 * 60 * 1000).toISOString() // Every 3 hours
         }));
         await supabase.from('transactions').insert(demo);
       }
+
+      // 3) Seed sample notifications
+      const { count: notifCount } = await supabase
+        .from('notifications')
+        .select('*', { count: 'exact', head: true })
+        .eq('user_id', user?.id);
+
+      if (!notifCount || notifCount < 3) {
+        const sampleNotifications = [
+          {
+            user_id: user?.id,
+            title: 'Payment Successful',
+            message: 'Payment to Din Tai Fung $68.40 completed successfully',
+            notification_type: 'payment',
+            created_at: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString()
+          },
+          {
+            user_id: user?.id,
+            title: 'Referral Reward',
+            message: 'You earned $10 from referring Sarah! 🎉',
+            notification_type: 'reward',
+            created_at: new Date(Date.now() - 6 * 60 * 60 * 1000).toISOString()
+          },
+          {
+            user_id: user?.id,
+            title: 'Group Pay Request',
+            message: 'Alex invited you to split the Din Tai Fung bill',
+            notification_type: 'group_pay',
+            created_at: new Date(Date.now() - 12 * 60 * 60 * 1000).toISOString()
+          }
+        ];
+        await supabase.from('notifications').insert(sampleNotifications);
+      }
+
+      // 4) Seed sample referrals
+      const { count: refCount } = await supabase
+        .from('referrals')
+        .select('*', { count: 'exact', head: true })
+        .eq('referrer_id', user?.id);
+
+      if (!refCount || refCount < 2) {
+        const sampleReferrals = [
+          {
+            referrer_id: user?.id,
+            referral_code: `NETS${user?.id?.substring(0, 8).toUpperCase()}`,
+            referee_email: 'sarah.chen@example.com',
+            status: 'completed',
+            reward_amount: 10.00,
+            completed_at: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString()
+          },
+          {
+            referrer_id: user?.id,
+            referral_code: `NETS${user?.id?.substring(0, 8).toUpperCase()}`,
+            referee_email: 'alex.kumar@example.com',
+            status: 'pending',
+            reward_amount: 10.00
+          }
+        ];
+        await supabase.from('referrals').insert(sampleReferrals);
+      }
+
+      // 5) Call function to seed demo users for leaderboard
+      await supabase.rpc('seed_demo_users');
+
     } catch (e) {
       console.error('Seeding error:', e);
     }
@@ -155,6 +219,40 @@ const Index = () => {
                 <div>
                   <h3 className="font-semibold text-foreground">QR Scanner</h3>
                   <p className="text-xs text-muted-foreground">Instant pay</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card 
+            className="bg-gradient-to-br from-accent/10 to-secondary/10 card-hover cursor-pointer"
+            onClick={() => navigate('/receipts')}
+          >
+            <CardContent className="p-6">
+              <div className="flex flex-col items-center text-center space-y-3">
+                <div className="w-12 h-12 bg-accent rounded-full flex items-center justify-center">
+                  <Receipt className="h-6 w-6 text-accent-foreground" />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-foreground">My Receipts</h3>
+                  <p className="text-xs text-muted-foreground">Transaction history</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card 
+            className="bg-gradient-to-br from-secondary/10 to-primary/10 card-hover cursor-pointer"
+            onClick={() => navigate('/referrals')}
+          >
+            <CardContent className="p-6">
+              <div className="flex flex-col items-center text-center space-y-3">
+                <div className="w-12 h-12 bg-secondary rounded-full flex items-center justify-center">
+                  <Gift className="h-6 w-6 text-secondary-foreground" />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-foreground">Referrals</h3>
+                  <p className="text-xs text-muted-foreground">Earn rewards</p>
                 </div>
               </div>
             </CardContent>
