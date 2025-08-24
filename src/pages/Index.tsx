@@ -69,16 +69,33 @@ const Index = () => {
 
           <Card 
             className="bg-gradient-to-br from-accent/10 to-secondary/10 card-hover cursor-pointer"
-            onClick={() => navigate('/promos')}
+            onClick={() => navigate('/streak')}
           >
             <CardContent className="p-6">
               <div className="flex flex-col items-center text-center space-y-3">
-                <div className="w-12 h-12 bg-accent rounded-full flex items-center justify-center">
-                  <Gift className="h-6 w-6 text-accent-foreground" />
+                <div className="w-12 h-12 bg-secondary rounded-full flex items-center justify-center">
+                  <TrendingUp className="h-6 w-6 text-secondary-foreground" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-foreground">NETS Promos</h3>
-                  <p className="text-xs text-muted-foreground">Exclusive deals</p>
+                  <h3 className="font-semibold text-foreground">Payment Streak</h3>
+                  <p className="text-xs text-muted-foreground">Track progress</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card 
+            className="bg-gradient-to-br from-primary/10 to-accent/10 card-hover cursor-pointer"
+            onClick={() => navigate('/scanning')}
+          >
+            <CardContent className="p-6">
+              <div className="flex flex-col items-center text-center space-y-3">
+                <div className="w-12 h-12 bg-primary rounded-full flex items-center justify-center">
+                  <Zap className="h-6 w-6 text-primary-foreground" />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-foreground">QR Scanner</h3>
+                  <p className="text-xs text-muted-foreground">Instant pay</p>
                 </div>
               </div>
             </CardContent>

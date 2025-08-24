@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react';
-import { Flame, Trophy, Calendar, Target } from 'lucide-react';
+import { Flame, Trophy, Calendar, Target, TrendingUp } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import MobileFrame from '@/components/MobileFrame';
 import Header from '@/components/Header';
 import BottomNavigation from '@/components/BottomNavigation';
 import { Card } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 
 const Streak = () => {
   const { user } = useAuth();
@@ -128,6 +129,43 @@ const Streak = () => {
             <div className="text-center p-4 bg-muted rounded-lg">
               <div className="text-2xl font-bold text-secondary">{streakCount}</div>
               <div className="text-sm text-muted-foreground">Best Streak</div>
+            </div>
+          </div>
+        </Card>
+
+        {/* Goal Setting */}
+        <Card className="p-6">
+          <div className="flex items-center gap-3 mb-4">
+            <TrendingUp className="text-primary" size={24} />
+            <h3 className="text-lg font-semibold">Set Goals</h3>
+          </div>
+          
+          <div className="space-y-4">
+            <div className="flex justify-between items-center">
+              <span>Weekly Payment Goal</span>
+              <div className="flex gap-2">
+                <Button
+                  size="sm"
+                  variant={weeklyGoal === 3 ? "default" : "outline"}
+                  onClick={() => setWeeklyGoal(3)}
+                >
+                  3
+                </Button>
+                <Button
+                  size="sm"
+                  variant={weeklyGoal === 5 ? "default" : "outline"}
+                  onClick={() => setWeeklyGoal(5)}
+                >
+                  5
+                </Button>
+                <Button
+                  size="sm"
+                  variant={weeklyGoal === 7 ? "default" : "outline"}
+                  onClick={() => setWeeklyGoal(7)}
+                >
+                  7
+                </Button>
+              </div>
             </div>
           </div>
         </Card>
