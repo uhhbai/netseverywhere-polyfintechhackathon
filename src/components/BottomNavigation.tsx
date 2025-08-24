@@ -8,7 +8,7 @@ const BottomNavigation = () => {
   const tabs = [
     { id: 'home', label: 'Home', icon: Home, path: '/' },
     { id: 'social', label: 'Social', icon: Users, path: '/leaderboard' },
-    { id: 'more', label: 'More', icon: Grid3X3, path: '/analytics' }
+    { id: 'more', label: 'More', icon: Grid3X3, path: '/profile' }
   ];
 
   const getActiveTab = () => {

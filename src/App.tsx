@@ -19,6 +19,7 @@ import Gifting from "./pages/Gifting";
 import Referrals from "./pages/Referrals";
 import Scanning from "./pages/Scanning";
 import NETSClick from "./pages/NETSClick";
+import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -46,6 +47,7 @@ const App = () => (
             <Route path="/referrals" element={<Referrals />} />
             <Route path="/scanning" element={<Scanning />} />
             <Route path="/netsclick" element={<NETSClick />} />
+            <Route path="/profile" element={<Profile />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
