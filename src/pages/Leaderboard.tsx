@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Crown, Medal, TrendingUp, Users } from 'lucide-react';
+import { Crown, Medal, TrendingUp, Users, Receipt } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import MobileFrame from '@/components/MobileFrame';
@@ -11,8 +11,10 @@ import { Badge } from '@/components/ui/badge';
 interface LeaderboardUser {
   id: string;
   display_name: string;
-  streak_count: number;
-  total_spent: number;
+  streak_count?: number;
+  total_spent?: number;
+  group_pay_count?: number;
+  referral_count?: number;
   rank: number;
 }
 
@@ -21,7 +23,7 @@ const Leaderboard = () => {
   const [leaderboard, setLeaderboard] = useState<LeaderboardUser[]>([]);
   const [userRank, setUserRank] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<'streak' | 'spending'>('streak');
+  const [activeTab, setActiveTab] = useState<'streak' | 'spending' | 'group_pays' | 'referrals'>('spending');
 
   useEffect(() => {
     fetchLeaderboard();
@@ -29,32 +31,73 @@ const Leaderboard = () => {
 
   const fetchLeaderboard = async () => {
     try {
-      const orderBy = activeTab === 'streak' ? 'streak_count' : 'total_spent';
-      
       // First, ensure demo users are seeded
       await supabase.rpc('seed_demo_users');
       
-      const { data: profiles } = await supabase
-        .from('profiles')
-        .select('user_id, display_name, streak_count, total_spent')
-        .order(orderBy, { ascending: false })
-        .limit(50);
-
-      if (profiles) {
-        const leaderboardData = profiles.map((profile, index) => ({
+      let leaderboardData = [];
+      
+      if (activeTab === 'group_pays') {
+        // Create demo group pay leaderboard
+        const demoGroupPayData = [
+          { id: 'demo-1', display_name: 'Sarah Chen', group_pay_count: 12 },
+          { id: 'demo-2', display_name: 'Rachel Wong', group_pay_count: 9 },
+          { id: 'demo-3', display_name: 'Emily Tan', group_pay_count: 8 },
+          { id: 'demo-4', display_name: 'Amanda Koh', group_pay_count: 7 },
+          { id: 'demo-5', display_name: 'Marcus Lee', group_pay_count: 6 },
+          { id: 'demo-6', display_name: 'Daniel Chua', group_pay_count: 5 },
+          { id: 'demo-7', display_name: 'Priya Singh', group_pay_count: 4 },
+          { id: 'demo-8', display_name: 'Lisa Kim', group_pay_count: 4 },
+          { id: 'demo-9', display_name: 'Grace Ng', group_pay_count: 3 },
+          { id: 'demo-10', display_name: 'Nicole Tan', group_pay_count: 3 }
+        ];
+        
+        leaderboardData = demoGroupPayData.map((user, index) => ({
+          ...user,
+          rank: index + 1
+        }));
+      } else if (activeTab === 'referrals') {
+        // Create demo referral leaderboard
+        const demoReferralData = [
+          { id: 'demo-1', display_name: 'Rachel Wong', referral_count: 15 },
+          { id: 'demo-2', display_name: 'Emily Tan', referral_count: 12 },
+          { id: 'demo-3', display_name: 'Amanda Koh', referral_count: 10 },
+          { id: 'demo-4', display_name: 'Sarah Chen', referral_count: 9 },
+          { id: 'demo-5', display_name: 'Daniel Chua', referral_count: 8 },
+          { id: 'demo-6', display_name: 'Grace Ng', referral_count: 7 },
+          { id: 'demo-7', display_name: 'Nicole Tan', referral_count: 6 },
+          { id: 'demo-8', display_name: 'Michelle Loh', referral_count: 5 },
+          { id: 'demo-9', display_name: 'Stephanie Wee', referral_count: 5 },
+          { id: 'demo-10', display_name: 'Cheryl Lim', referral_count: 4 }
+        ];
+        
+        leaderboardData = demoReferralData.map((user, index) => ({
+          ...user,
+          rank: index + 1
+        }));
+      } else {
+        // Fetch spending or streak leaders
+        const orderBy = activeTab === 'streak' ? 'streak_count' : 'total_spent';
+        
+        const { data: profiles } = await supabase
+          .from('profiles')
+          .select('user_id, display_name, streak_count, total_spent')
+          .order(orderBy, { ascending: false })
+          .limit(25);
+          
+        leaderboardData = profiles?.map((profile, index) => ({
           id: profile.user_id,
           display_name: profile.display_name || 'Anonymous User',
           streak_count: profile.streak_count || 0,
           total_spent: profile.total_spent || 0,
           rank: index + 1
-        }));
-
-        setLeaderboard(leaderboardData);
-
-        // Find current user's rank
-        const currentUserRank = leaderboardData.find(u => u.id === user?.id)?.rank;
-        setUserRank(currentUserRank || null);
+        })) || [];
       }
+
+      setLeaderboard(leaderboardData);
+
+      // Find current user's rank
+      const currentUserRank = leaderboardData.find(u => u.id === user?.id)?.rank;
+      setUserRank(currentUserRank || null);
     } catch (error) {
       console.error('Error fetching leaderboard:', error);
     } finally {
@@ -104,28 +147,50 @@ const Leaderboard = () => {
       
       <div className="p-6 space-y-6 pb-24">
         {/* Tab Selector */}
-        <div className="flex bg-muted rounded-lg p-1">
-          <button
-            onClick={() => setActiveTab('streak')}
-            className={`flex-1 flex items-center justify-center gap-2 py-2 px-4 rounded-md transition-all ${
-              activeTab === 'streak' 
-                ? 'bg-primary text-primary-foreground' 
-                : 'text-muted-foreground'
-            }`}
-          >
-            <TrendingUp size={16} />
-            Streak
-          </button>
+        <div className="grid grid-cols-2 gap-2 bg-muted rounded-lg p-1">
           <button
             onClick={() => setActiveTab('spending')}
-            className={`flex-1 flex items-center justify-center gap-2 py-2 px-4 rounded-md transition-all ${
+            className={`flex items-center justify-center gap-2 py-2 px-3 rounded-md transition-all ${
               activeTab === 'spending' 
                 ? 'bg-primary text-primary-foreground' 
                 : 'text-muted-foreground'
             }`}
           >
-            <Users size={16} />
-            Spending
+            <Users size={14} />
+            <span className="text-xs">Spending</span>
+          </button>
+          <button
+            onClick={() => setActiveTab('streak')}
+            className={`flex items-center justify-center gap-2 py-2 px-3 rounded-md transition-all ${
+              activeTab === 'streak' 
+                ? 'bg-primary text-primary-foreground' 
+                : 'text-muted-foreground'
+            }`}
+          >
+            <TrendingUp size={14} />
+            <span className="text-xs">Streak</span>
+          </button>
+          <button
+            onClick={() => setActiveTab('group_pays')}
+            className={`flex items-center justify-center gap-2 py-2 px-3 rounded-md transition-all ${
+              activeTab === 'group_pays' 
+                ? 'bg-primary text-primary-foreground' 
+                : 'text-muted-foreground'
+            }`}
+          >
+            <Receipt size={14} />
+            <span className="text-xs">Group Pay</span>
+          </button>
+          <button
+            onClick={() => setActiveTab('referrals')}
+            className={`flex items-center justify-center gap-2 py-2 px-3 rounded-md transition-all ${
+              activeTab === 'referrals' 
+                ? 'bg-primary text-primary-foreground' 
+                : 'text-muted-foreground'
+            }`}
+          >
+            <Crown size={14} />
+            <span className="text-xs">Referrals</span>
           </button>
         </div>
 
@@ -141,10 +206,10 @@ const Leaderboard = () => {
                 </div>
               </div>
               <Badge variant="secondary">
-                {activeTab === 'streak' 
-                  ? `${leaderboard.find(u => u.id === user?.id)?.streak_count || 0} days`
-                  : `$${(leaderboard.find(u => u.id === user?.id)?.total_spent || 0).toFixed(2)}`
-                }
+                {activeTab === 'streak' && `${leaderboard.find(u => u.id === user?.id)?.streak_count || 0} days`}
+                {activeTab === 'spending' && `$${(leaderboard.find(u => u.id === user?.id)?.total_spent || 0).toFixed(2)}`}
+                {activeTab === 'group_pays' && `${leaderboard.find(u => u.id === user?.id)?.group_pay_count || 0} group pays`}
+                {activeTab === 'referrals' && `${leaderboard.find(u => u.id === user?.id)?.referral_count || 0} referrals`}
               </Badge>
             </div>
           </Card>
@@ -170,10 +235,10 @@ const Leaderboard = () => {
                       )}
                     </p>
                     <p className="text-sm text-muted-foreground">
-                      {activeTab === 'streak' 
-                        ? `${leaderUser.streak_count} day streak`
-                        : `$${leaderUser.total_spent.toFixed(2)} total spent`
-                      }
+                      {activeTab === 'streak' && `${leaderUser.streak_count || 0} day streak`}
+                      {activeTab === 'spending' && `$${(leaderUser.total_spent || 0).toFixed(2)} total spent`}
+                      {activeTab === 'group_pays' && `${leaderUser.group_pay_count || 0} group pays created`}
+                      {activeTab === 'referrals' && `${leaderUser.referral_count || 0} successful referrals`}
                     </p>
                   </div>
                 </div>
@@ -205,10 +270,11 @@ const Leaderboard = () => {
         <Card className="p-6 bg-gradient-to-r from-blue-50 to-purple-50 border border-blue-200">
           <h4 className="font-semibold mb-3 text-blue-800">🏆 How Rankings Work</h4>
           <ul className="space-y-2 text-sm text-blue-700">
-            <li>• <strong>Streak:</strong> Consecutive days with NETS payments</li>
             <li>• <strong>Spending:</strong> Total amount spent using NETS</li>
+            <li>• <strong>Streak:</strong> Consecutive days with NETS payments</li>
+            <li>• <strong>Group Pay:</strong> Number of group sessions created</li>
+            <li>• <strong>Referrals:</strong> Successful friend invitations</li>
             <li>• Rankings update in real-time</li>
-            <li>• Compete with friends and climb the leaderboard!</li>
           </ul>
         </Card>
       </div>

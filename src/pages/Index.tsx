@@ -174,7 +174,7 @@ const Index = () => {
       <div className="p-4 space-y-6">
         <div className="grid grid-cols-2 gap-4">
           <Card 
-            className="col-span-2 bg-gradient-to-r from-primary/10 to-accent/10 card-hover cursor-pointer"
+            className="bg-gradient-to-r from-primary/10 to-accent/10 card-hover cursor-pointer"
             onClick={() => navigate('/grouppay')}
           >
             <CardContent className="p-6">
@@ -184,7 +184,24 @@ const Index = () => {
                 </div>
                 <div className="flex-1">
                   <h3 className="text-lg font-semibold text-foreground">NETS GroupPay</h3>
-                  <p className="text-sm text-muted-foreground">Split bills effortlessly with friends</p>
+                  <p className="text-sm text-muted-foreground">Create & split bills</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card 
+            className="bg-gradient-to-r from-secondary/10 to-primary/10 card-hover cursor-pointer"
+            onClick={() => navigate('/shared-orders')}
+          >
+            <CardContent className="p-6">
+              <div className="flex items-center space-x-4">
+                <div className="w-12 h-12 bg-secondary rounded-full flex items-center justify-center">
+                  <Receipt className="h-6 w-6 text-secondary-foreground" />
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-lg font-semibold text-foreground">Shared Orders</h3>
+                  <p className="text-sm text-muted-foreground">Pay your share</p>
                 </div>
               </div>
             </CardContent>

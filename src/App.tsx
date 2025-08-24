@@ -21,6 +21,7 @@ import Scanning from "./pages/Scanning";
 import NETSClick from "./pages/NETSClick";
 import Profile from "./pages/Profile";
 import ReceiptDetails from "./pages/ReceiptDetails";
+import SharedOrders from "./pages/SharedOrders";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -49,7 +50,8 @@ const App = () => (
             <Route path="/scanning" element={<Scanning />} />
             <Route path="/netsclick" element={<NETSClick />} />
             <Route path="/profile" element={<Profile />} />
-            <Route path="/receipt-details" element={<ReceiptDetails />} />
+            <Route path="/receipt-details/:sessionId" element={<ReceiptDetails />} />
+            <Route path="/shared-orders" element={<SharedOrders />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
