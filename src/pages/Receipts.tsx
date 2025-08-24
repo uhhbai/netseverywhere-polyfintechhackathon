@@ -2,13 +2,14 @@ import React, { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Receipt, Calendar, DollarSign, ArrowLeft } from 'lucide-react';
+import { Receipt, Calendar, DollarSign, ArrowLeft, Users, Share2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import MobileFrame from '@/components/MobileFrame';
 import Header from '@/components/Header';
 import BottomNavigation from '@/components/BottomNavigation';
+import { useToast } from '@/hooks/use-toast';
 
 interface Transaction {
   id: string;
@@ -25,6 +26,7 @@ const Receipts = () => {
   const [loading, setLoading] = useState(true);
   const { user } = useAuth();
   const navigate = useNavigate();
+  const { toast } = useToast();
 
   useEffect(() => {
     if (user) {
@@ -65,6 +67,87 @@ const Receipts = () => {
       hour: '2-digit',
       minute: '2-digit'
     });
+  };
+
+  const handleCreateGroupShare = async (transaction: Transaction) => {
+    try {
+      // Create receipt items based on transaction
+      const receiptItems = generateReceiptItems(transaction);
+      
+      // Calculate GST and service charge
+      const subtotal = transaction.amount / 1.17; // Remove 17% (10% service + 7% GST)
+      const serviceCharge = subtotal * 0.10;
+      const gstAmount = (subtotal + serviceCharge) * 0.07;
+
+      // Create group pay session
+      const { data: session, error } = await supabase
+        .from('group_pay_sessions')
+        .insert({
+          session_name: `${transaction.merchant_name} - ${formatDate(transaction.created_at)}`,
+          creator_id: user?.id,
+          total_amount: transaction.amount,
+          subtotal: subtotal,
+          service_charge: serviceCharge,
+          gst_amount: gstAmount,
+          receipt_items: receiptItems,
+          status: 'active'
+        })
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      // Copy shareable link to clipboard
+      const shareUrl = `${window.location.origin}/receipt-details/${session.id}`;
+      await navigator.clipboard.writeText(shareUrl);
+      
+      toast({
+        title: "Group Share Link Created",
+        description: "Link copied to clipboard! Share it with your friends.",
+      });
+
+    } catch (error) {
+      console.error('Error creating group share:', error);
+      toast({
+        title: "Error",
+        description: "Failed to create group share link",
+        variant: "destructive"
+      });
+    }
+  };
+
+  const generateReceiptItems = (transaction: Transaction) => {
+    // Generate sample receipt items based on merchant
+    const merchantItems: Record<string, any[]> = {
+      'Din Tai Fung': [
+        { item_name: 'Xiao Long Bao (6pcs)', price: 12.80, quantity: 2 },
+        { item_name: 'Fried Rice with Prawns', price: 18.60, quantity: 1 },
+        { item_name: 'Sweet & Sour Pork', price: 22.40, quantity: 1 },
+        { item_name: 'Chinese Tea', price: 3.20, quantity: 4 }
+      ],
+      'McDonald\'s': [
+        { item_name: 'Big Mac Meal', price: 9.50, quantity: 2 },
+        { item_name: 'Chicken McNuggets (9pcs)', price: 7.90, quantity: 1 },
+        { item_name: 'Apple Pie', price: 2.50, quantity: 3 },
+        { item_name: 'Coca Cola', price: 2.20, quantity: 2 }
+      ],
+      'Starbucks': [
+        { item_name: 'Caffe Latte (Grande)', price: 6.50, quantity: 2 },
+        { item_name: 'Cappuccino (Tall)', price: 5.20, quantity: 1 },
+        { item_name: 'Blueberry Muffin', price: 4.80, quantity: 2 }
+      ]
+    };
+
+    // Find matching merchant or use default items
+    const merchantName = Object.keys(merchantItems).find(name => 
+      transaction.merchant_name.includes(name)
+    );
+
+    return merchantItems[merchantName] || [
+      { item_name: 'Item 1', price: transaction.amount * 0.4, quantity: 1 },
+      { item_name: 'Item 2', price: transaction.amount * 0.3, quantity: 1 },
+      { item_name: 'Item 3', price: transaction.amount * 0.3, quantity: 1 }
+    ];
   };
 
   if (loading) {
@@ -140,11 +223,9 @@ const Receipts = () => {
                       <Button variant="outline" size="sm">
                         View Details
                       </Button>
-                      {transaction.merchant_name.includes('Din Tai Fung') && (
-                        <Button variant="default" size="sm" onClick={() => navigate('/grouppay')}>
-                          Split Bill
-                        </Button>
-                      )}
+                      <Button variant="default" size="sm" onClick={() => handleCreateGroupShare(transaction)}>
+                        Send Group Link
+                      </Button>
                     </div>
                   </div>
                 </div>

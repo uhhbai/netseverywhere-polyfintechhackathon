@@ -7,7 +7,7 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import Receipts from "./pages/Receipts";
-import GroupPay from "./pages/GroupPay";
+
 import Promos from "./pages/Promos";
 import Streak from "./pages/Streak";
 import Leaderboard from "./pages/Leaderboard";
@@ -37,7 +37,7 @@ const App = () => (
             <Route path="/" element={<Index />} />
             <Route path="/auth" element={<Auth />} />
             <Route path="/receipts" element={<Receipts />} />
-            <Route path="/grouppay" element={<GroupPay />} />
+            
             <Route path="/promos" element={<Promos />} />
             <Route path="/streak" element={<Streak />} />
             <Route path="/leaderboard" element={<Leaderboard />} />

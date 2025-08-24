@@ -171,11 +171,11 @@ const Index = () => {
       <BalanceCard />
 
       {/* Feature Cards */}
-      <div className="p-4 space-y-6">
+      <div className="p-4 space-y-6 pb-28">
         <div className="grid grid-cols-2 gap-4">
           <Card 
             className="bg-gradient-to-r from-primary/10 to-accent/10 card-hover cursor-pointer"
-            onClick={() => navigate('/grouppay')}
+            onClick={() => navigate('/receipts')}
           >
             <CardContent className="p-6">
               <div className="flex items-center space-x-4">
