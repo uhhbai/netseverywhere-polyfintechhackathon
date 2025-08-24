@@ -52,6 +52,7 @@ const App = () => (
             <Route path="/profile" element={<Profile />} />
             <Route path="/receipt-details/:sessionId" element={<ReceiptDetails />} />
             <Route path="/shared-orders" element={<SharedOrders />} />
+            <Route path="/grouppay" element={<SharedOrders />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

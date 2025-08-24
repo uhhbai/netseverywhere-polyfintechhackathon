@@ -345,7 +345,7 @@ const Profile = () => {
             <Button 
               variant="outline" 
               className="w-full justify-start"
-              onClick={() => navigate('/grouppay')}
+              onClick={() => navigate('/shared-orders')}
             >
               <Users size={16} className="mr-2" />
               Group Pay Sessions

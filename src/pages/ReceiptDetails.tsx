@@ -68,7 +68,7 @@ const ReceiptDetails = () => {
       description: `Your share: $${myShare.toFixed(2)}. Payment request sent.`,
     });
     
-    setTimeout(() => navigate('/grouppay'), 1500);
+    setTimeout(() => navigate('/shared-orders'), 1500);
   };
 
   return (
@@ -76,7 +76,7 @@ const ReceiptDetails = () => {
       <Header 
         title="Din Tai Fung Receipt" 
         showBack 
-        onBack={() => navigate('/grouppay')}
+        onBack={() => navigate('/shared-orders')}
       />
       
       <div className="p-4 space-y-4 pb-24">
