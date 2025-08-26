@@ -12,6 +12,10 @@ import { Switch } from '@/components/ui/switch';
 import { Input } from '@/components/ui/input';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
+import SupportDialog from '@/components/SupportDialog';
+import PolicyDialog from '@/components/PolicyDialog';
+import AddCardDialog from '@/components/AddCardDialog';
+import SecurityDialog from '@/components/SecurityDialog';
 
 interface UserProfile {
   display_name: string;
@@ -36,6 +40,14 @@ const Profile = () => {
   const [notifications, setNotifications] = useState(true);
   const [biometric, setBiometric] = useState(false);
   const [autoPayment, setAutoPayment] = useState(true);
+
+  // Dialog states
+  const [supportOpen, setSupportOpen] = useState(false);
+  const [policyOpen, setPolicyOpen] = useState(false);
+  const [policyType, setPolicyType] = useState<'terms' | 'privacy'>('terms');
+  const [addCardOpen, setAddCardOpen] = useState(false);
+  const [securityOpen, setSecurityOpen] = useState(false);
+  const [securityType, setSecurityType] = useState<'password' | 'twofa' | 'privacy' | 'data'>('password');
 
   useEffect(() => {
     if (user) {
@@ -214,7 +226,11 @@ const Profile = () => {
               <Badge variant="outline">Linked</Badge>
             </div>
             
-            <Button variant="outline" className="w-full mt-3">
+            <Button 
+              variant="outline" 
+              className="w-full mt-3"
+              onClick={() => setAddCardOpen(true)}
+            >
               Add New Card
             </Button>
           </div>
@@ -311,16 +327,44 @@ const Profile = () => {
           </div>
           
           <div className="space-y-3">
-            <Button variant="outline" className="w-full justify-start">
+            <Button 
+              variant="outline" 
+              className="w-full justify-start"
+              onClick={() => {
+                setSecurityType('password');
+                setSecurityOpen(true);
+              }}
+            >
               Change Password
             </Button>
-            <Button variant="outline" className="w-full justify-start">
+            <Button 
+              variant="outline" 
+              className="w-full justify-start"
+              onClick={() => {
+                setSecurityType('twofa');
+                setSecurityOpen(true);
+              }}
+            >
               Two-Factor Authentication
             </Button>
-            <Button variant="outline" className="w-full justify-start">
+            <Button 
+              variant="outline" 
+              className="w-full justify-start"
+              onClick={() => {
+                setSecurityType('privacy');
+                setSecurityOpen(true);
+              }}
+            >
               Privacy Settings
             </Button>
-            <Button variant="outline" className="w-full justify-start">
+            <Button 
+              variant="outline" 
+              className="w-full justify-start"
+              onClick={() => {
+                setSecurityType('data');
+                setSecurityOpen(true);
+              }}
+            >
               Download My Data
             </Button>
           </div>
@@ -353,6 +397,14 @@ const Profile = () => {
             <Button 
               variant="outline" 
               className="w-full justify-start"
+              onClick={() => navigate('/bill-split')}
+            >
+              <Receipt size={16} className="mr-2" />
+              Bill Split Requests
+            </Button>
+            <Button 
+              variant="outline" 
+              className="w-full justify-start"
               onClick={() => navigate('/receipts')}
             >
               <Receipt size={16} className="mr-2" />
@@ -364,13 +416,31 @@ const Profile = () => {
         {/* Support & Info */}
         <Card className="p-6">
           <div className="space-y-3">
-            <Button variant="outline" className="w-full justify-start">
+            <Button 
+              variant="outline" 
+              className="w-full justify-start"
+              onClick={() => setSupportOpen(true)}
+            >
               Help & Support
             </Button>
-            <Button variant="outline" className="w-full justify-start">
+            <Button 
+              variant="outline" 
+              className="w-full justify-start"
+              onClick={() => {
+                setPolicyType('terms');
+                setPolicyOpen(true);
+              }}
+            >
               Terms of Service
             </Button>
-            <Button variant="outline" className="w-full justify-start">
+            <Button 
+              variant="outline" 
+              className="w-full justify-start"
+              onClick={() => {
+                setPolicyType('privacy');
+                setPolicyOpen(true);
+              }}
+            >
               Privacy Policy
             </Button>
             <div className="text-center text-sm text-muted-foreground mt-4">
@@ -391,6 +461,20 @@ const Profile = () => {
       </div>
 
       <BottomNavigation />
+
+      {/* Dialogs */}
+      <SupportDialog open={supportOpen} onOpenChange={setSupportOpen} />
+      <PolicyDialog 
+        open={policyOpen} 
+        onOpenChange={setPolicyOpen}
+        type={policyType}
+      />
+      <AddCardDialog open={addCardOpen} onOpenChange={setAddCardOpen} />
+      <SecurityDialog 
+        open={securityOpen} 
+        onOpenChange={setSecurityOpen}
+        type={securityType}
+      />
     </MobileFrame>
   );
 };

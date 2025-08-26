@@ -224,7 +224,11 @@ const Receipts = () => {
                       {transaction.transaction_type.replace('_', ' ')}
                     </Badge>
                     <div className="flex gap-2">
-                      <Button variant="outline" size="sm">
+                      <Button 
+                        variant="outline" 
+                        size="sm"
+                        onClick={() => navigate(`/receipt-details/${transaction.id}`)}
+                      >
                         View Details
                       </Button>
                       <Button variant="default" size="sm" onClick={() => handleCreateGroupShare(transaction)}>
