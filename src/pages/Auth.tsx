@@ -4,7 +4,7 @@ import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { useAuth } from '@/contexts/AuthContext';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { toast } from '@/hooks/use-toast';
 import MobileFrame from '@/components/MobileFrame';
 
@@ -12,10 +12,33 @@ const Auth = () => {
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [referralCode, setReferralCode] = useState('');
+  const [referralCodeErrorMsg, setReferralCodeErrorMsg] = useState('');
+  const [isInvalidCode, setIsInvalidCode] = useState(false);
   const [displayName, setDisplayName] = useState('');
   const [loading, setLoading] = useState(false);
   const { user, signIn, signUp } = useAuth();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const ref = searchParams.get("ref");
+
+  useEffect(() => {
+    if (ref) {
+      setIsLogin(false);
+      setReferralCode(ref);
+    }
+  }, [ref]);
+
+  function verifyReferralCodeInput(code: string) {
+    setReferralCode(code);
+    if (code.match("^NETS[0-9A-F]{8}$") || code == "") {
+      setReferralCodeErrorMsg("");
+      setIsInvalidCode(false);
+    } else {
+      setReferralCodeErrorMsg("Invalid referral code.");
+      setIsInvalidCode(true);
+    }
+  }
 
   useEffect(() => {
     if (user) {
@@ -117,10 +140,23 @@ const Auth = () => {
                   required
                 />
               </div>
+              {!isLogin && <div className="space-y-2">
+                <Label htmlFor="referralCode">Referral Code (💵 Get $10 credits!)</Label>
+                <br></br>
+                <Label style={{color: "red"}}>{referralCodeErrorMsg}</Label>
+                <Input
+                  id="referralCode"
+                  type="text"
+                  placeholder="NETSxxxxxxxx"
+                  value={referralCode}
+                  onChange={(e) => verifyReferralCodeInput(e.target.value)}
+                  required
+                />
+              </div>}
               <Button 
                 type="submit" 
                 className="w-full" 
-                disabled={loading}
+                disabled={loading || isInvalidCode}
               >
                 {loading ? 'Loading...' : (isLogin ? 'Sign In' : 'Sign Up')}
               </Button>
