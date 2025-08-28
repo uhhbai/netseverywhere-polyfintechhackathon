@@ -39,7 +39,7 @@ const Referrals = () => {
       const { data: referralData } = await supabase
         .from('referrals')
         .select('*')
-        .eq('referrer_id', user?.id)
+        .or(`referrer_id.eq.${user?.id}, referee_id.eq.${user?.id}`)
         .order('created_at', { ascending: false });
 
       if (referralData) {

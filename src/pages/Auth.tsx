@@ -66,7 +66,7 @@ const Auth = () => {
           });
         }
       } else {
-        const { error } = await signUp(email, password, displayName);
+        const { error } = await signUp(email, password, displayName, referralCode);
         if (error) {
           toast({
             title: "Sign Up Failed",

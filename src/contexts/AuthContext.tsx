@@ -6,7 +6,7 @@ interface AuthContextType {
   user: User | null;
   session: Session | null;
   loading: boolean;
-  signUp: (email: string, password: string, displayName?: string) => Promise<{ error: any }>;
+  signUp: (email: string, password: string, displayName?: string, referralCode?: string) => Promise<{ error: any }>;
   signIn: (email: string, password: string) => Promise<{ error: any }>;
   signOut: () => Promise<void>;
 }
@@ -38,21 +38,67 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return () => subscription.unsubscribe();
   }, []);
 
-  const signUp = async (email: string, password: string, displayName?: string) => {
-    const redirectUrl = `${window.location.origin}/`;
-    
-    const { error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        emailRedirectTo: redirectUrl,
-        data: {
-          display_name: displayName
-        }
-      }
-    });
+const signUp = async (
+  email: string,
+  password: string,
+  displayName?: string,
+  referralCode?: string
+) => {
+  const redirectUrl = `${window.location.origin}/`;
+
+  const { data: profiles, error } = await supabase
+    .from("profiles")
+    .select("*");
+
+  if (error) {
+    console.error("Error fetching profiles:", error);
     return { error };
-  };
+  }
+
+  let referralCodeFound = false;
+  let refereeId: string;
+  profiles.forEach((profile) => {
+    const profileCode = "NETS" + profile.user_id.substring(0, 8).toUpperCase();
+    if (profileCode == referralCode) {
+      referralCodeFound = true;
+      refereeId = profile.user_id;
+    }
+  });
+
+  if (!referralCodeFound) {
+    return {
+      error: {
+        message: "Referral code not found."
+      }
+    }
+  }
+
+  const { data, error: signUpError } = await supabase.auth.signUp({
+    email,
+    password,
+    options: {
+      emailRedirectTo: redirectUrl,
+      data: {
+        display_name: displayName
+      }
+    }
+  });
+
+  const referrerId = data.user.id;
+
+  await supabase
+    .from("referrals")
+    .insert({
+      referrer_id: referrerId,
+      referee_id: refereeId,
+      referral_code: referralCode,
+      referee_email: email,
+      status: "completed",
+    })
+    .then(res => console.log(res));
+
+  return { error: signUpError };
+};
 
   const signIn = async (email: string, password: string) => {
     const { error } = await supabase.auth.signInWithPassword({
