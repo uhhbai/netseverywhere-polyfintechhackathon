@@ -150,7 +150,6 @@ const Auth = () => {
                   placeholder="NETSxxxxxxxx"
                   value={referralCode}
                   onChange={(e) => verifyReferralCodeInput(e.target.value)}
-                  required
                 />
               </div>}
               <Button 
