@@ -167,7 +167,7 @@ const Scanning = () => {
               className="w-full h-20 flex-col gap-2"
             >
               <Zap className="text-primary" size={32} />
-              <span className="text-sm font-medium">NETS Click</span>
+              <span className="text-sm font-medium">NETS Contactless</span>
             </Button>
             <p className="text-xs text-muted-foreground mt-2">Contactless payments</p>
           </Card>
