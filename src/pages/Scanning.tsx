@@ -84,7 +84,7 @@ const Scanning = () => {
 
   const openNETSClick = () => {
     toast({
-      title: "NETS Click",
+      title: "NETS Contactless",
       description: "Opening contactless payment mode...",
     });
   };
