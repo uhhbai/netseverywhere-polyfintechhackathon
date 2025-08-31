@@ -22,16 +22,36 @@ const ReceiptDetails = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const sessionId = searchParams.get('session');
+  const merchantName = searchParams.get('merchant') || 'Din Tai Fung';
   
-  // Demo receipt data - in real app this would come from database
-  const [receiptItems, setReceiptItems] = useState<ReceiptItem[]>([
-    { id: '1', name: 'Xiaolongbao (8 pcs)', price: 8.50, quantity: 2, selected: false },
-    { id: '2', name: 'Beef Noodle Soup', price: 12.80, quantity: 1, selected: false },
-    { id: '3', name: 'Fried Rice', price: 11.20, quantity: 1, selected: false },
-    { id: '4', name: 'Jasmine Tea', price: 4.50, quantity: 2, selected: false },
-    { id: '5', name: 'Sweet & Sour Pork', price: 15.60, quantity: 1, selected: false },
-    { id: '6', name: 'Hot & Sour Soup', price: 6.80, quantity: 1, selected: false }
-  ]);
+  // Dynamic receipt data based on merchant
+  const getReceiptItems = (merchant: string): ReceiptItem[] => {
+    const merchantItems: Record<string, ReceiptItem[]> = {
+      'Din Tai Fung': [
+        { id: '1', name: 'Xiaolongbao (8 pcs)', price: 8.50, quantity: 2, selected: false },
+        { id: '2', name: 'Beef Noodle Soup', price: 12.80, quantity: 1, selected: false },
+        { id: '3', name: 'Fried Rice', price: 11.20, quantity: 1, selected: false },
+        { id: '4', name: 'Jasmine Tea', price: 4.50, quantity: 2, selected: false },
+        { id: '5', name: 'Sweet & Sour Pork', price: 15.60, quantity: 1, selected: false },
+        { id: '6', name: 'Hot & Sour Soup', price: 6.80, quantity: 1, selected: false }
+      ],
+      'McDonald\'s': [
+        { id: '1', name: 'Big Mac Meal', price: 9.50, quantity: 2, selected: false },
+        { id: '2', name: 'Chicken McNuggets (9pcs)', price: 7.90, quantity: 1, selected: false },
+        { id: '3', name: 'Apple Pie', price: 2.50, quantity: 3, selected: false },
+        { id: '4', name: 'Coca Cola', price: 2.20, quantity: 2, selected: false }
+      ],
+      'Starbucks': [
+        { id: '1', name: 'Caffe Latte (Grande)', price: 6.50, quantity: 2, selected: false },
+        { id: '2', name: 'Cappuccino (Tall)', price: 5.20, quantity: 1, selected: false },
+        { id: '3', name: 'Blueberry Muffin', price: 4.80, quantity: 2, selected: false }
+      ]
+    };
+    
+    return merchantItems[merchant] || merchantItems['Din Tai Fung'];
+  };
+
+  const [receiptItems, setReceiptItems] = useState<ReceiptItem[]>(() => getReceiptItems(merchantName));
 
   const subtotal = 68.40;
   const gst = subtotal * 0.07;
@@ -73,18 +93,18 @@ const ReceiptDetails = () => {
 
   return (
     <MobileFrame>
-      <Header 
-        title="Din Tai Fung Receipt" 
-        showBack 
-        onBack={() => navigate('/shared-orders')}
-      />
+        <Header 
+          title={`${merchantName} Receipt`} 
+          showBack 
+          onBack={() => navigate('/shared-orders')}
+        />
       
       <div className="p-4 space-y-4 pb-24">
         {/* Restaurant Info */}
         <Card>
           <CardHeader className="pb-3">
             <div className="flex items-center justify-between">
-              <CardTitle className="text-lg">Din Tai Fung</CardTitle>
+              <CardTitle className="text-lg">{merchantName}</CardTitle>
               <Badge variant="outline">
                 <Users size={14} className="mr-1" />
                 4 friends invited

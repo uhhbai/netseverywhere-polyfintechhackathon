@@ -139,7 +139,7 @@ const NETSClick = () => {
 
   return (
     <MobileFrame>
-      <Header title="NETS Click" />
+      <Header title="NETS Contactless" />
       
       <div className="p-6 space-y-6 pb-24">
         {/* Payment Interface */}
@@ -159,7 +159,7 @@ const NETSClick = () => {
             
             <div>
               <h2 className="text-xl font-bold mb-2">
-                {isPaymentReady ? 'Ready to Pay' : 'NETS Click'}
+                {isPaymentReady ? 'Ready to Pay' : 'NETS Contactless'}
               </h2>
               <p className="text-muted-foreground">
                 {isPaymentReady 
@@ -288,7 +288,7 @@ const NETSClick = () => {
 
         {/* Tips */}
         <Card className="p-6 bg-gradient-to-r from-indigo-50 to-purple-50 border border-indigo-200">
-          <h4 className="font-semibold mb-3 text-indigo-800">⚡ NETS Click Tips</h4>
+          <h4 className="font-semibold mb-3 text-indigo-800">⚡ NETS Contactless Tips</h4>
           <ul className="space-y-2 text-sm text-indigo-700">
             <li>• Hold your phone within 4cm of the payment terminal</li>
             <li>• No need to open the app - payments work from lock screen</li>

@@ -227,7 +227,7 @@ const Receipts = () => {
                       <Button 
                         variant="outline" 
                         size="sm"
-                        onClick={() => navigate(`/receipt-details/${transaction.id}`)}
+                        onClick={() => navigate(`/receipt-details?session=${transaction.id}&merchant=${encodeURIComponent(transaction.merchant_name)}`)}
                       >
                         View Details
                       </Button>

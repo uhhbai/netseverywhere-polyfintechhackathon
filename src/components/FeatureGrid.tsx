@@ -1,6 +1,8 @@
 import { Users, Gift, Target, BarChart3, Bookmark, TrendingUp } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 const FeatureGrid = () => {
+  const navigate = useNavigate();
   const features = [
     {
       icon: Users,
@@ -50,7 +52,10 @@ const FeatureGrid = () => {
     <div className="px-6 mt-6">
       <div className="grid grid-cols-2 gap-4">
         {/* GroupPay - Large card */}
-        <div className="col-span-1 bg-surface rounded-3xl p-6 card-hover card-press border border-card-border">
+        <div 
+          className="col-span-1 bg-surface rounded-3xl p-6 card-hover card-press border border-card-border cursor-pointer"
+          onClick={() => navigate('/bill-split-requests')}
+        >
           <div className="flex flex-col items-center text-center">
             <div className="w-12 h-12 bg-primary rounded-2xl flex items-center justify-center mb-4">
               <Users size={24} className="text-white" />
@@ -62,7 +67,10 @@ const FeatureGrid = () => {
         </div>
 
         {/* Promos */}
-        <div className="col-span-1 bg-surface rounded-3xl p-6 card-hover card-press border border-card-border">
+        <div 
+          className="col-span-1 bg-surface rounded-3xl p-6 card-hover card-press border border-card-border cursor-pointer"
+          onClick={() => navigate('/promos')}
+        >
           <div className="flex flex-col items-center text-center">
             <div className="w-12 h-12 bg-accent rounded-2xl flex items-center justify-center mb-4">
               <Gift size={24} className="text-white" />
@@ -74,7 +82,10 @@ const FeatureGrid = () => {
         </div>
 
         {/* Challenges - Full width */}
-        <div className="col-span-2 bg-surface rounded-3xl p-6 card-hover card-press border border-card-border">
+        <div 
+          className="col-span-2 bg-surface rounded-3xl p-6 card-hover card-press border border-card-border cursor-pointer"
+          onClick={() => navigate('/challenges')}
+        >
           <div className="flex items-center gap-4">
             <div className="w-12 h-12 bg-streak rounded-2xl flex items-center justify-center">
               <Target size={24} className="text-white" />
@@ -96,7 +107,10 @@ const FeatureGrid = () => {
 
         {/* Bottom row - 3 small cards */}
         <div className="col-span-2 grid grid-cols-3 gap-3">
-          <div className="bg-surface rounded-2xl p-4 card-hover card-press border border-card-border">
+          <div 
+            className="bg-surface rounded-2xl p-4 card-hover card-press border border-card-border cursor-pointer"
+            onClick={() => navigate('/gifting')}
+          >
             <div className="flex flex-col items-center text-center">
               <div className="w-10 h-10 bg-secondary rounded-xl flex items-center justify-center mb-3">
                 <Gift size={18} className="text-white" />
@@ -106,7 +120,10 @@ const FeatureGrid = () => {
             </div>
           </div>
 
-          <div className="bg-surface rounded-2xl p-4 card-hover card-press border border-card-border">
+          <div 
+            className="bg-surface rounded-2xl p-4 card-hover card-press border border-card-border cursor-pointer"
+            onClick={() => navigate('/analytics')}
+          >
             <div className="flex flex-col items-center text-center">
               <div className="w-10 h-10 bg-primary-dark rounded-xl flex items-center justify-center mb-3">
                 <BarChart3 size={18} className="text-white" />
@@ -116,7 +133,10 @@ const FeatureGrid = () => {
             </div>
           </div>
 
-          <div className="bg-surface rounded-2xl p-4 card-hover card-press border border-card-border">
+          <div 
+            className="bg-surface rounded-2xl p-4 card-hover card-press border border-card-border cursor-pointer"
+            onClick={() => navigate('/referrals')}
+          >
             <div className="flex flex-col items-center text-center">
               <div className="w-10 h-10 bg-gold rounded-xl flex items-center justify-center mb-3">
                 <TrendingUp size={18} className="text-white" />

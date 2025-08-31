@@ -24,6 +24,8 @@ import ReceiptDetails from "./pages/ReceiptDetails";
 import SharedOrders from "./pages/SharedOrders";
 import NotFound from "./pages/NotFound";
 import MyQr from "./pages/MyQr";
+import BillSplit from "./pages/BillSplit";
+import BillSplitRequests from "./pages/BillSplitRequests";
 
 const queryClient = new QueryClient();
 
@@ -52,9 +54,12 @@ const App = () => (
             <Route path="/myqr" element={<MyQr />} />
             <Route path="/netsclick" element={<NETSClick />} />
             <Route path="/profile" element={<Profile />} />
+            <Route path="/receipt-details" element={<ReceiptDetails />} />
             <Route path="/receipt-details/:sessionId" element={<ReceiptDetails />} />
             <Route path="/shared-orders" element={<SharedOrders />} />
             <Route path="/grouppay" element={<SharedOrders />} />
+            <Route path="/bill-split" element={<BillSplit />} />
+            <Route path="/bill-split-requests" element={<BillSplitRequests />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
