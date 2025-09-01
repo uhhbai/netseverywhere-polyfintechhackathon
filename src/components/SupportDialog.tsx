@@ -2,86 +2,101 @@ import React from 'react';
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { HelpCircle, MessageCircle, Phone, Mail } from 'lucide-react';
-import { useToast } from '@/hooks/use-toast';
+import { MessageCircle, Phone, Mail, FileText, ExternalLink } from 'lucide-react';
 
 interface SupportDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }
 
-const SupportDialog = ({ open, onOpenChange }: SupportDialogProps) => {
-  const { toast } = useToast();
+const SupportDialog: React.FC<SupportDialogProps> = ({ open, onOpenChange }) => {
+  const handleLiveChat = () => {
+    // Simulate opening live chat
+    window.open('https://help.nets.com.sg/chat', '_blank');
+  };
 
-  const handleSubmitTicket = () => {
-    toast({
-      title: "Support Ticket Submitted",
-      description: "We'll get back to you within 24 hours.",
-    });
-    onOpenChange(false);
+  const handlePhoneSupport = () => {
+    window.open('tel:+6562245577');
+  };
+
+  const handleEmailSupport = () => {
+    window.open('mailto:support@nets.com.sg?subject=NETS Everywhere Support Request');
+  };
+
+  const handleFAQ = () => {
+    window.open('https://help.nets.com.sg/faq', '_blank');
   };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-sm">
+      <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
-            <HelpCircle className="h-5 w-5" />
-            Help & Support
-          </DialogTitle>
-          <DialogDescription>
-            Get help with your NETS Everywhere account
-          </DialogDescription>
+          <DialogTitle>Help & Support</DialogTitle>
         </DialogHeader>
         
         <div className="space-y-4">
-          {/* Quick Actions */}
-          <div className="grid grid-cols-2 gap-3">
-            <Button variant="outline" className="flex-col h-16 gap-1">
-              <Phone size={20} />
-              <span className="text-xs">Call Support</span>
-            </Button>
-            <Button variant="outline" className="flex-col h-16 gap-1">
-              <MessageCircle size={20} />
-              <span className="text-xs">Live Chat</span>
-            </Button>
-          </div>
-
-          {/* Submit Ticket */}
           <Card className="p-4">
-            <h4 className="font-semibold mb-3">Submit a Ticket</h4>
+            <h3 className="font-semibold mb-3">Contact Support</h3>
             <div className="space-y-3">
-              <Input placeholder="Subject" />
-              <Textarea placeholder="Describe your issue..." rows={3} />
-              <Button onClick={handleSubmitTicket} className="w-full">
-                Submit Ticket
+              <Button
+                variant="outline"
+                className="w-full justify-start"
+                onClick={handleLiveChat}
+              >
+                <MessageCircle className="mr-2" size={16} />
+                Live Chat (24/7)
+                <ExternalLink className="ml-auto" size={14} />
+              </Button>
+              
+              <Button
+                variant="outline"
+                className="w-full justify-start"
+                onClick={handlePhoneSupport}
+              >
+                <Phone className="mr-2" size={16} />
+                Call: +65 6224 5577
+              </Button>
+              
+              <Button
+                variant="outline"
+                className="w-full justify-start"
+                onClick={handleEmailSupport}
+              >
+                <Mail className="mr-2" size={16} />
+                Email Support
               </Button>
             </div>
           </Card>
 
-          {/* FAQ */}
           <Card className="p-4">
-            <h4 className="font-semibold mb-3">Common Questions</h4>
-            <div className="space-y-2 text-sm">
-              <p>• How do I add a new card?</p>
-              <p>• Why is my payment failing?</p>
-              <p>• How do I reset my password?</p>
-              <p>• How does bill splitting work?</p>
+            <h3 className="font-semibold mb-3">Self-Help Resources</h3>
+            <div className="space-y-3">
+              <Button
+                variant="outline"
+                className="w-full justify-start"
+                onClick={handleFAQ}
+              >
+                <FileText className="mr-2" size={16} />
+                FAQ & Troubleshooting
+                <ExternalLink className="ml-auto" size={14} />
+              </Button>
             </div>
           </Card>
 
-          <div className="text-center text-sm text-muted-foreground">
-            <p>📞 Hotline: 1800-NETS-123</p>
-            <p>📧 Email: support@nets.com.sg</p>
-          </div>
+          <Card className="p-4 bg-muted">
+            <h4 className="font-semibold mb-2">Quick Tips</h4>
+            <ul className="text-sm text-muted-foreground space-y-1">
+              <li>• Payment issues? Check your network connection</li>
+              <li>• Can't scan QR? Ensure camera permissions are enabled</li>
+              <li>• Balance not updating? Pull down to refresh</li>
+              <li>• For urgent payment issues, use live chat</li>
+            </ul>
+          </Card>
         </div>
       </DialogContent>
     </Dialog>

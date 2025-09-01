@@ -33,6 +33,23 @@ const SharedOrders = () => {
     }
   }, [user]);
 
+  useEffect(() => {
+    // Listen for status updates from ReceiptDetails page
+    const handleStorageChange = () => {
+      setSharedSessions(prev => prev.map(session => {
+        const statusData = localStorage.getItem(`session-${session.id}`);
+        if (statusData) {
+          const { status, amount } = JSON.parse(statusData);
+          return { ...session, my_status: status, my_amount: amount };
+        }
+        return session;
+      }));
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    return () => window.removeEventListener('storage', handleStorageChange);
+  }, []);
+
   const fetchSharedSessions = async () => {
     try {
       // First seed demo data
@@ -106,8 +123,9 @@ const SharedOrders = () => {
     }
   };
 
-  const handleViewReceipt = (sessionId: string) => {
-    navigate(`/receipt-details/${sessionId}`);
+  const handleViewReceipt = (sessionId: string, sessionName: string) => {
+    const merchantName = sessionName.split(' ')[0] + ' ' + sessionName.split(' ')[1];
+    navigate(`/receipt-details?session=${sessionId}&merchant=${encodeURIComponent(merchantName)}&from=shared-orders`);
   };
 
   if (loading) {
@@ -196,7 +214,7 @@ const SharedOrders = () => {
                   <Button 
                     variant="outline" 
                     size="sm"
-                    onClick={() => handleViewReceipt(session.id)}
+                    onClick={() => handleViewReceipt(session.id, session.session_name)}
                   >
                     {session.my_status === 'pending' ? 'Select Items' : 'View Receipt'}
                   </Button>

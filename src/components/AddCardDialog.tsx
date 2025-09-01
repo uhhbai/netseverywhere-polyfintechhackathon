@@ -2,27 +2,29 @@ import React, { useState } from 'react';
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { CreditCard, Shield } from 'lucide-react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
+import { CreditCard, Shield } from 'lucide-react';
 
 interface AddCardDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }
 
-const AddCardDialog = ({ open, onOpenChange }: AddCardDialogProps) => {
+const AddCardDialog: React.FC<AddCardDialogProps> = ({ open, onOpenChange }) => {
   const { toast } = useToast();
   const [cardNumber, setCardNumber] = useState('');
   const [expiryDate, setExpiryDate] = useState('');
   const [cvv, setCvv] = useState('');
   const [cardholderName, setCardholderName] = useState('');
+  const [cardType, setCardType] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
   const formatCardNumber = (value: string) => {
     const v = value.replace(/\s+/g, '').replace(/[^0-9]/gi, '');
@@ -40,15 +42,25 @@ const AddCardDialog = ({ open, onOpenChange }: AddCardDialogProps) => {
   };
 
   const formatExpiryDate = (value: string) => {
-    const v = value.replace(/\s+/g, '').replace(/[^0-9]/gi, '');
+    const v = value.replace(/\D/g, '');
     if (v.length >= 2) {
-      return `${v.substring(0, 2)}/${v.substring(2, 4)}`;
+      return v.substring(0, 2) + '/' + v.substring(2, 4);
     }
     return v;
   };
 
-  const handleAddCard = () => {
-    if (!cardNumber || !expiryDate || !cvv || !cardholderName) {
+  const handleCardNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const formatted = formatCardNumber(e.target.value);
+    setCardNumber(formatted);
+  };
+
+  const handleExpiryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const formatted = formatExpiryDate(e.target.value);
+    setExpiryDate(formatted);
+  };
+
+  const handleAddCard = async () => {
+    if (!cardNumber || !expiryDate || !cvv || !cardholderName || !cardType) {
       toast({
         title: "Missing Information",
         description: "Please fill in all card details.",
@@ -57,115 +69,124 @@ const AddCardDialog = ({ open, onOpenChange }: AddCardDialogProps) => {
       return;
     }
 
-    toast({
-      title: "Card Added Successfully! 🎉",
-      description: "Your new payment method has been added securely.",
-    });
-    
-    // Reset form
-    setCardNumber('');
-    setExpiryDate('');
-    setCvv('');
-    setCardholderName('');
-    onOpenChange(false);
+    setIsLoading(true);
+
+    // Simulate API call
+    setTimeout(() => {
+      toast({
+        title: "Card Added Successfully! 💳",
+        description: "Your new card has been added and verified.",
+      });
+      
+      // Reset form
+      setCardNumber('');
+      setExpiryDate('');
+      setCvv('');
+      setCardholderName('');
+      setCardType('');
+      setIsLoading(false);
+      onOpenChange(false);
+    }, 2000);
   };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-sm">
+      <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <CreditCard className="h-5 w-5" />
+            <CreditCard size={20} />
             Add New Card
           </DialogTitle>
-          <DialogDescription>
-            Add a new payment method to your account
-          </DialogDescription>
         </DialogHeader>
         
         <div className="space-y-4">
-          <div className="bg-gradient-to-r from-blue-500 to-purple-600 p-4 rounded-lg text-white">
-            <div className="flex justify-between items-start mb-3">
-              <div className="text-xs opacity-75">NETS EVERYWHERE</div>
-              <CreditCard size={20} />
-            </div>
-            <div className="text-lg font-mono tracking-wider mb-2">
-              {cardNumber || '•••• •••• •••• ••••'}
-            </div>
-            <div className="flex justify-between items-end">
-              <div>
-                <div className="text-xs opacity-75">CARDHOLDER</div>
-                <div className="text-sm">
-                  {cardholderName.toUpperCase() || 'YOUR NAME'}
-                </div>
-              </div>
-              <div>
-                <div className="text-xs opacity-75">EXPIRES</div>
-                <div className="text-sm">{expiryDate || 'MM/YY'}</div>
-              </div>
-            </div>
+          <div>
+            <Label htmlFor="cardType">Card Type</Label>
+            <Select value={cardType} onValueChange={setCardType}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select card type" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="visa">Visa</SelectItem>
+                <SelectItem value="mastercard">Mastercard</SelectItem>
+                <SelectItem value="amex">American Express</SelectItem>
+                <SelectItem value="nets">NETS</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
 
-          <div className="space-y-3">
+          <div>
+            <Label htmlFor="cardholderName">Cardholder Name</Label>
+            <Input
+              id="cardholderName"
+              placeholder="John Doe"
+              value={cardholderName}
+              onChange={(e) => setCardholderName(e.target.value.toUpperCase())}
+              maxLength={50}
+            />
+          </div>
+
+          <div>
+            <Label htmlFor="cardNumber">Card Number</Label>
+            <Input
+              id="cardNumber"
+              placeholder="1234 5678 9012 3456"
+              value={cardNumber}
+              onChange={handleCardNumberChange}
+              maxLength={19}
+            />
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
             <div>
-              <Label htmlFor="cardNumber">Card Number</Label>
+              <Label htmlFor="expiryDate">Expiry Date</Label>
               <Input
-                id="cardNumber"
-                placeholder="1234 5678 9012 3456"
-                value={cardNumber}
-                onChange={(e) => setCardNumber(formatCardNumber(e.target.value))}
-                maxLength={19}
+                id="expiryDate"
+                placeholder="MM/YY"
+                value={expiryDate}
+                onChange={handleExpiryChange}
+                maxLength={5}
               />
             </div>
-
+            
             <div>
-              <Label htmlFor="cardholderName">Cardholder Name</Label>
+              <Label htmlFor="cvv">CVV</Label>
               <Input
-                id="cardholderName"
-                placeholder="John Doe"
-                value={cardholderName}
-                onChange={(e) => setCardholderName(e.target.value)}
+                id="cvv"
+                placeholder="123"
+                type="password"
+                value={cvv}
+                onChange={(e) => setCvv(e.target.value.replace(/\D/g, ''))}
+                maxLength={4}
               />
             </div>
+          </div>
 
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <Label htmlFor="expiryDate">Expiry Date</Label>
-                <Input
-                  id="expiryDate"
-                  placeholder="MM/YY"
-                  value={expiryDate}
-                  onChange={(e) => setExpiryDate(formatExpiryDate(e.target.value))}
-                  maxLength={5}
-                />
-              </div>
-              <div>
-                <Label htmlFor="cvv">CVV</Label>
-                <Input
-                  id="cvv"
-                  placeholder="123"
-                  value={cvv}
-                  onChange={(e) => setCvv(e.target.value.replace(/\D/g, ''))}
-                  maxLength={4}
-                  type="password"
-                />
-              </div>
+          <div className="flex items-center gap-2 p-3 bg-muted rounded-lg">
+            <Shield className="text-green-600" size={16} />
+            <div className="text-sm">
+              <p className="font-medium">Secure & Encrypted</p>
+              <p className="text-muted-foreground text-xs">
+                Your card details are protected with bank-level security
+              </p>
             </div>
           </div>
 
-          <div className="flex items-center gap-2 p-3 bg-green-50 rounded-lg border border-green-200">
-            <Shield className="h-4 w-4 text-green-600" />
-            <span className="text-sm text-green-700">
-              Your card details are encrypted and secure
-            </span>
-          </div>
-
-          <div className="flex gap-2 pt-2">
-            <Button variant="outline" onClick={() => onOpenChange(false)} className="flex-1">
+          <div className="flex gap-3">
+            <Button
+              variant="outline"
+              className="flex-1"
+              onClick={() => onOpenChange(false)}
+              disabled={isLoading}
+            >
               Cancel
             </Button>
-            <Button onClick={handleAddCard} className="flex-1">
-              Add Card
+            <Button
+              className="flex-1"
+              onClick={handleAddCard}
+              disabled={isLoading}
+            >
+              {isLoading ? 'Adding...' : 'Add Card'}
             </Button>
           </div>
         </div>

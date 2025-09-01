@@ -23,6 +23,7 @@ const ReceiptDetails = () => {
   const [searchParams] = useSearchParams();
   const sessionId = searchParams.get('session');
   const merchantName = searchParams.get('merchant') || 'Din Tai Fung';
+  const fromPage = searchParams.get('from') || 'receipts';
   
   // Dynamic receipt data based on merchant
   const getReceiptItems = (merchant: string): ReceiptItem[] => {
@@ -83,12 +84,21 @@ const ReceiptDetails = () => {
       return;
     }
 
+    // Update the session status in SharedOrders component
+    if (typeof window !== 'undefined') {
+      localStorage.setItem(`session-${sessionId}`, JSON.stringify({
+        status: 'paid',
+        amount: myShare,
+        timestamp: new Date().toISOString()
+      }));
+    }
+
     toast({
       title: "Selection Confirmed! ✓",
-      description: `Your share: $${myShare.toFixed(2)}. Payment request sent.`,
+      description: `Your share: $${myShare.toFixed(2)}. Payment successful!`,
     });
     
-    setTimeout(() => navigate('/shared-orders'), 1500);
+    setTimeout(() => navigate(fromPage === 'shared-orders' ? '/shared-orders' : '/receipts'), 1500);
   };
 
   return (
@@ -96,7 +106,7 @@ const ReceiptDetails = () => {
         <Header 
           title={`${merchantName} Receipt`} 
           showBack 
-          onBack={() => navigate('/shared-orders')}
+          onBack={() => navigate(fromPage === 'shared-orders' ? '/shared-orders' : '/receipts')}
         />
       
       <div className="p-4 space-y-4 pb-24">
