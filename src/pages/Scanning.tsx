@@ -1,15 +1,15 @@
-import { useState, useEffect } from 'react';
-import { Camera, QrCode, CreditCard, MapPin, History, Zap } from 'lucide-react';
-import { useAuth } from '@/contexts/AuthContext';
-import { supabase } from '@/integrations/supabase/client';
-import MobileFrame from '@/components/MobileFrame';
-import Header from '@/components/Header';
-import BottomNavigation from '@/components/BottomNavigation';
-import { Card } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { useToast } from '@/hooks/use-toast';
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from "react";
+import { Camera, QrCode, CreditCard, MapPin, History, Zap } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
+import { supabase } from "@/integrations/supabase/client";
+import MobileFrame from "@/components/MobileFrame";
+import Header from "@/components/Header";
+import BottomNavigation from "@/components/BottomNavigation";
+import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { useToast } from "@/hooks/use-toast";
+import { useNavigate } from "react-router-dom";
 
 interface RecentScan {
   id: string;
@@ -25,6 +25,7 @@ const Scanning = () => {
   const [isScanning, setIsScanning] = useState(false);
   const [recentScans, setRecentScans] = useState<RecentScan[]>([]);
   const [loading, setLoading] = useState(true);
+  const [stream, setStream] = useState<MediaStream | null>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -36,50 +37,57 @@ const Scanning = () => {
   const fetchRecentScans = async () => {
     try {
       const { data: transactions } = await supabase
-        .from('transactions')
-        .select('*')
-        .eq('user_id', user?.id)
-        .order('created_at', { ascending: false })
+        .from("transactions")
+        .select("*")
+        .eq("user_id", user?.id)
+        .order("created_at", { ascending: false })
         .limit(5);
 
       if (transactions) {
-        const scans = transactions.map(t => ({
+        const scans = transactions.map((t) => ({
           id: t.id,
           merchant_name: t.merchant_name,
           amount: Number(t.amount),
           created_at: t.created_at,
-          location: 'Singapore' // Simulated location
+          location: "Singapore", // Simulated location
         }));
         setRecentScans(scans);
       }
     } catch (error) {
-      console.error('Error fetching recent scans:', error);
+      console.error("Error fetching recent scans:", error);
     } finally {
       setLoading(false);
     }
   };
 
-  const startScanning = () => {
-    setIsScanning(true);
-    // Simulate scanning process
-    setTimeout(() => {
-      setIsScanning(false);
-      // Simulate successful scan
-      const merchants = [
-        'Coffee Bean & Tea Leaf',
-        'McDonald\'s Singapore',
-        'FairPrice Xtra',
-        'Starbucks Reserve',
-        'Ya Kun Kaya Toast'
-      ];
-      const randomMerchant = merchants[Math.floor(Math.random() * merchants.length)];
-      const randomAmount = (Math.random() * 50 + 5).toFixed(2);
-      
-      toast({
-        title: "QR Code Scanned! 📱",
-        description: `Ready to pay $${randomAmount} at ${randomMerchant}`,
+  const startScanning = async () => {
+    try {
+      setIsScanning(true);
+      const mediaStream = await navigator.mediaDevices.getUserMedia({
+        video: true,
       });
-    }, 2000);
+      setStream(mediaStream);
+      // Keep camera active for 2 seconds then stop
+      setTimeout(() => {
+        if (mediaStream) {
+          mediaStream.getTracks().forEach((track) => track.stop());
+        }
+        setStream(null);
+        setIsScanning(false);
+
+        toast({
+          title: "QR Code Scanned! 📱",
+          description: `Paid $17 to Jakey H!`,
+        });
+      }, 2000);
+    } catch (error) {
+      toast({
+        title: "Camera Access Denied",
+        description: "Please allow camera access to scan QR codes.",
+        variant: "destructive",
+      });
+      setIsScanning(false);
+    }
   };
 
   const openNETSClick = () => {
@@ -90,11 +98,11 @@ const Scanning = () => {
   };
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
+    return new Date(dateString).toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
     });
   };
 
@@ -111,7 +119,7 @@ const Scanning = () => {
   return (
     <MobileFrame>
       <Header title="NETS QR Scanner" />
-      
+
       <div className="p-6 space-y-6 pb-24">
         {/* Scanner Interface */}
         <Card className="p-8 text-center">
@@ -120,7 +128,7 @@ const Scanning = () => {
               <div className="w-32 h-32 mx-auto bg-gradient-primary rounded-3xl flex items-center justify-center">
                 <QrCode size={64} className="text-white" />
               </div>
-              
+
               <div>
                 <h2 className="text-xl font-bold mb-2">Scan to Pay</h2>
                 <p className="text-muted-foreground">
@@ -128,7 +136,7 @@ const Scanning = () => {
                 </p>
               </div>
 
-              <Button 
+              <Button
                 onClick={startScanning}
                 className="w-full h-14 text-lg bg-gradient-primary"
               >
@@ -136,24 +144,22 @@ const Scanning = () => {
                 Start Scanning
               </Button>
             </div>
+          ) : stream ? (
+            <video
+              autoPlay
+              playsInline
+              muted
+              ref={(videoElement) => {
+                if (videoElement && stream) {
+                  videoElement.srcObject = stream;
+                }
+              }}
+              className="w-32 h-32 mx-auto rounded-3xl"
+            />
           ) : (
-            <div className="space-y-6">
-              <div className="w-32 h-32 mx-auto bg-gray-200 rounded-3xl flex items-center justify-center animate-pulse">
-                <Camera size={64} className="text-gray-400" />
-              </div>
-              
-              <div>
-                <h2 className="text-xl font-bold mb-2">Scanning...</h2>
-                <p className="text-muted-foreground">
-                  Point your camera at the QR code
-                </p>
-              </div>
-
-              <div className="animate-pulse">
-                <div className="w-full h-2 bg-primary/20 rounded-full">
-                  <div className="h-2 bg-primary rounded-full animate-[pulse_1s_ease-in-out_infinite]" style={{ width: '60%' }} />
-                </div>
-              </div>
+            // Fallback scanning animation UI if stream is not ready
+            <div className="w-32 h-32 mx-auto bg-gray-200 rounded-3xl flex items-center justify-center animate-pulse">
+              <Camera size={64} className="text-gray-400" />
             </div>
           )}
         </Card>
@@ -161,27 +167,31 @@ const Scanning = () => {
         {/* Quick Actions */}
         <div className="grid grid-cols-2 gap-4">
           <Card className="p-4 text-center">
-            <Button 
+            <Button
               onClick={openNETSClick}
-              variant="ghost" 
+              variant="ghost"
               className="w-full h-20 flex-col gap-2"
             >
               <Zap className="text-primary" size={32} />
               <span className="text-sm font-medium">NETS Contactless</span>
             </Button>
-            <p className="text-xs text-muted-foreground mt-2">Contactless payments</p>
+            <p className="text-xs text-muted-foreground mt-2">
+              Contactless payments via NFC
+            </p>
           </Card>
-          
+
           <Card className="p-4 text-center">
-            <Button 
-              variant="ghost" 
+            <Button
+              variant="ghost"
               className="w-full h-20 flex-col gap-2"
-              onClick={() => navigate('../myqr')}
+              onClick={() => navigate("../myqr")}
             >
               <CreditCard className="text-secondary" size={32} />
               <span className="text-sm font-medium">My QR</span>
             </Button>
-            <p className="text-xs text-muted-foreground mt-2">Show your QR code</p>
+            <p className="text-xs text-muted-foreground mt-2">
+              Generate a QR code for your account
+            </p>
           </Card>
         </div>
 
@@ -191,11 +201,14 @@ const Scanning = () => {
             <History className="text-primary" size={24} />
             <h3 className="text-lg font-semibold">Recent Scans</h3>
           </div>
-          
+
           {recentScans.length > 0 ? (
             <div className="space-y-3">
               {recentScans.map((scan) => (
-                <div key={scan.id} className="flex items-center justify-between p-3 bg-muted rounded-lg">
+                <div
+                  key={scan.id}
+                  className="flex items-center justify-between p-3 bg-muted rounded-lg"
+                >
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 bg-gradient-primary rounded-full flex items-center justify-center">
                       <QrCode className="text-white" size={16} />
@@ -219,9 +232,14 @@ const Scanning = () => {
             </div>
           ) : (
             <div className="text-center py-8">
-              <QrCode className="mx-auto mb-4 text-muted-foreground" size={48} />
+              <QrCode
+                className="mx-auto mb-4 text-muted-foreground"
+                size={48}
+              />
               <p className="text-muted-foreground">No recent scans</p>
-              <p className="text-sm text-muted-foreground">Start scanning QR codes to see your history</p>
+              <p className="text-sm text-muted-foreground">
+                Start scanning QR codes to see your history
+              </p>
             </div>
           )}
         </Card>
