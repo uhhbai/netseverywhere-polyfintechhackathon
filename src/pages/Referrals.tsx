@@ -262,7 +262,7 @@ Use my referral code *${referralCode}* and we both get $10 bonus! 💰`;
               </div>
               <div>
                 <p className="font-medium">Both earn $10</p>
-                <p>You both receive $10 bonus after their first transaction</p>
+                <p>You both receive a $10 bonus credited to your primary accounts after their first transaction</p>
               </div>
             </div>
           </div>
