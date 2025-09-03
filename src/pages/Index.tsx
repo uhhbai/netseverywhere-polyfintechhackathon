@@ -423,7 +423,7 @@ const Index = () => {
 
           <Card
             className="bg-gradient-to-br from-accent/10 to-primary/10 card-hover cursor-pointer"
-            onClick={() => navigate("/transfer")}
+            onClick={() => navigate("/gifting")}
           >
             <CardContent className="p-6">
               <div className="flex flex-col items-center text-center space-y-3">
