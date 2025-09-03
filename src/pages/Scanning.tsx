@@ -136,6 +136,24 @@ const Scanning = () => {
                 </p>
               </div>
 
+              {/* Discount Code Field */}
+              <div className="text-left">
+                <label className="block text-sm font-medium mb-2">Discount Code (Optional)</label>
+                <div className="relative">
+                  <input
+                    type="text"
+                    placeholder="Enter discount code"
+                    className="w-full px-3 py-2 border border-card-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary/50 pr-10"
+                  />
+                  <div className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground">
+                    %
+                  </div>
+                </div>
+                <p className="text-xs text-muted-foreground mt-1">
+                  Apply discount codes before scanning
+                </p>
+              </div>
+
               <Button
                 onClick={startScanning}
                 className="w-full h-14 text-lg bg-gradient-primary"

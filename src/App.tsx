@@ -26,6 +26,8 @@ import NotFound from "./pages/NotFound";
 import MyQr from "./pages/MyQr";
 import BillSplit from "./pages/BillSplit";
 import BillSplitRequests from "./pages/BillSplitRequests";
+import Transfer from "./pages/Transfer";
+import PointsRedemption from "./pages/PointsRedemption";
 
 const queryClient = new QueryClient();
 
@@ -61,6 +63,8 @@ const App = () => (
             <Route path="/grouppay" element={<SharedOrders />} />
             <Route path="/bill-split" element={<BillSplit />} />
             <Route path="/bill-split-requests" element={<BillSplitRequests />} />
+            <Route path="/transfer" element={<Transfer />} />
+            <Route path="/points" element={<PointsRedemption />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
