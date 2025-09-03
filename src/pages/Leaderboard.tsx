@@ -166,7 +166,7 @@ const Leaderboard = () => {
             }`}
           >
             <Users size={14} />
-            <span className="text-xs">Spending</span>
+            <span className="text-xs">Points</span>
           </button>
           <button
             onClick={() => setActiveTab("streak")}
@@ -305,8 +305,7 @@ const Leaderboard = () => {
           </h4>
           <ul className="space-y-2 text-sm text-blue-700">
             <li>
-              • <strong>Spending:</strong> Total amount spent using
-              NETSEverywhere
+              • <strong>Points:</strong> Points earned through transactions via NETSEverywhere
             </li>
             <li>
               • <strong>Streak:</strong> Consecutive days with payments of
