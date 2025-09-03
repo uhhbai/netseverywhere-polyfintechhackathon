@@ -132,7 +132,7 @@ const Scanning = () => {
               <div>
                 <h2 className="text-xl font-bold mb-2">Scan to Pay</h2>
                 <p className="text-muted-foreground">
-                  Point your camera at the merchant's QR code to make a payment
+                  Point your camera at the NETS QR code to make a payment
                 </p>
               </div>
 
