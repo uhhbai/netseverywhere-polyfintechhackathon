@@ -253,9 +253,6 @@ const Transfer = () => {
                       />
                       <Percent className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" size={16} />
                     </div>
-                    <p className="text-xs text-muted-foreground mt-1">
-                      Try "SAVE10" for 10% off your transfer
-                    </p>
                   </div>
 
                   <Button
@@ -333,9 +330,6 @@ const Transfer = () => {
                       />
                       <Percent className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" size={16} />
                     </div>
-                    <p className="text-xs text-muted-foreground mt-1">
-                      Try "TRANSFER5" for 5% off your transfer fee
-                    </p>
                   </div>
 
                   <Button
