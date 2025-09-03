@@ -15,7 +15,7 @@ interface ReceiptItem {
   name: string;
   price: number;
   quantity: number;
-  selected: boolean;
+  selectedQuantity: number;
 }
 
 const ReceiptDetails = () => {
@@ -29,23 +29,23 @@ const ReceiptDetails = () => {
   const getReceiptItems = (merchant: string): ReceiptItem[] => {
     const merchantItems: Record<string, ReceiptItem[]> = {
       'Din Tai Fung': [
-        { id: '1', name: 'Xiaolongbao (8 pcs)', price: 8.50, quantity: 2, selected: false },
-        { id: '2', name: 'Beef Noodle Soup', price: 12.80, quantity: 1, selected: false },
-        { id: '3', name: 'Fried Rice', price: 11.20, quantity: 1, selected: false },
-        { id: '4', name: 'Jasmine Tea', price: 4.50, quantity: 2, selected: false },
-        { id: '5', name: 'Sweet & Sour Pork', price: 15.60, quantity: 1, selected: false },
-        { id: '6', name: 'Hot & Sour Soup', price: 6.80, quantity: 1, selected: false }
+        { id: '1', name: 'Xiaolongbao (8 pcs)', price: 8.50, quantity: 2, selectedQuantity: 0 },
+        { id: '2', name: 'Beef Noodle Soup', price: 12.80, quantity: 1, selectedQuantity: 0 },
+        { id: '3', name: 'Fried Rice', price: 11.20, quantity: 1, selectedQuantity: 0 },
+        { id: '4', name: 'Jasmine Tea', price: 4.50, quantity: 2, selectedQuantity: 0 },
+        { id: '5', name: 'Sweet & Sour Pork', price: 15.60, quantity: 1, selectedQuantity: 0 },
+        { id: '6', name: 'Hot & Sour Soup', price: 6.80, quantity: 1, selectedQuantity: 0 }
       ],
       'McDonald\'s': [
-        { id: '1', name: 'Big Mac Meal', price: 9.50, quantity: 2, selected: false },
-        { id: '2', name: 'Chicken McNuggets (9pcs)', price: 7.90, quantity: 1, selected: false },
-        { id: '3', name: 'Apple Pie', price: 2.50, quantity: 3, selected: false },
-        { id: '4', name: 'Coca Cola', price: 2.20, quantity: 2, selected: false }
+        { id: '1', name: 'Big Mac Meal', price: 9.50, quantity: 2, selectedQuantity: 0 },
+        { id: '2', name: 'Chicken McNuggets (9pcs)', price: 7.90, quantity: 1, selectedQuantity: 0 },
+        { id: '3', name: 'Apple Pie', price: 2.50, quantity: 3, selectedQuantity: 0 },
+        { id: '4', name: 'Coca Cola', price: 2.20, quantity: 2, selectedQuantity: 0 }
       ],
       'Starbucks': [
-        { id: '1', name: 'Caffe Latte (Grande)', price: 6.50, quantity: 2, selected: false },
-        { id: '2', name: 'Cappuccino (Tall)', price: 5.20, quantity: 1, selected: false },
-        { id: '3', name: 'Blueberry Muffin', price: 4.80, quantity: 2, selected: false }
+        { id: '1', name: 'Caffe Latte (Grande)', price: 6.50, quantity: 2, selectedQuantity: 0 },
+        { id: '2', name: 'Cappuccino (Tall)', price: 5.20, quantity: 1, selectedQuantity: 0 },
+        { id: '3', name: 'Blueberry Muffin', price: 4.80, quantity: 2, selectedQuantity: 0 }
       ]
     };
     
@@ -54,23 +54,27 @@ const ReceiptDetails = () => {
 
   const [receiptItems, setReceiptItems] = useState<ReceiptItem[]>(() => getReceiptItems(merchantName));
 
-  const subtotal = 68.40;
-  const gst = subtotal * 0.07;
-  const serviceCharge = subtotal * 0.1;
-  const total = subtotal + gst + serviceCharge;
+  // Calculate actual subtotal from receipt items
+  const actualSubtotal = receiptItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+  const gst = actualSubtotal * 0.07;
+  const serviceCharge = actualSubtotal * 0.1;
+  const total = actualSubtotal + gst + serviceCharge;
 
   const selectedTotal = receiptItems
-    .filter(item => item.selected)
-    .reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    .reduce((sum, item) => sum + (item.price * item.selectedQuantity), 0);
 
   const myShare = selectedTotal > 0 ? 
-    selectedTotal + (selectedTotal / subtotal) * (gst + serviceCharge) : 0;
+    selectedTotal + (selectedTotal / actualSubtotal) * (gst + serviceCharge) : 0;
 
-  const toggleItem = (itemId: string) => {
+  const adjustQuantity = (itemId: string, change: number) => {
     setReceiptItems(items => 
-      items.map(item => 
-        item.id === itemId ? { ...item, selected: !item.selected } : item
-      )
+      items.map(item => {
+        if (item.id === itemId) {
+          const newQuantity = Math.max(0, Math.min(item.quantity, item.selectedQuantity + change));
+          return { ...item, selectedQuantity: newQuantity };
+        }
+        return item;
+      })
     );
   };
 
@@ -146,22 +150,48 @@ const ReceiptDetails = () => {
           </CardHeader>
           <CardContent className="space-y-3">
             {receiptItems.map((item) => (
-              <div key={item.id} className="flex items-center space-x-3 p-3 rounded-lg border">
-                <Checkbox
-                  checked={item.selected}
-                  onCheckedChange={() => toggleItem(item.id)}
-                />
-                <div className="flex-1">
-                  <div className="flex justify-between">
+              <div key={item.id} className="p-3 rounded-lg border space-y-2">
+                <div className="flex justify-between items-start">
+                  <div className="flex-1">
                     <span className="font-medium">{item.name}</span>
-                    <span className="font-semibold">
-                      ${(item.price * item.quantity).toFixed(2)}
-                    </span>
-                  </div>
-                  <div className="text-sm text-muted-foreground">
-                    ${item.price.toFixed(2)} × {item.quantity}
+                    <div className="text-sm text-muted-foreground">
+                      ${item.price.toFixed(2)} × {item.quantity} = ${(item.price * item.quantity).toFixed(2)}
+                    </div>
                   </div>
                 </div>
+                
+                <div className="flex items-center justify-between">
+                  <span className="text-sm font-medium">Your quantity:</span>
+                  <div className="flex items-center gap-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => adjustQuantity(item.id, -1)}
+                      disabled={item.selectedQuantity === 0}
+                      className="h-8 w-8 p-0"
+                    >
+                      -
+                    </Button>
+                    <span className="w-8 text-center text-sm font-medium">
+                      {item.selectedQuantity}
+                    </span>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => adjustQuantity(item.id, 1)}
+                      disabled={item.selectedQuantity >= item.quantity}
+                      className="h-8 w-8 p-0"
+                    >
+                      +
+                    </Button>
+                  </div>
+                </div>
+                
+                {item.selectedQuantity > 0 && (
+                  <div className="text-sm text-primary font-medium">
+                    Your share: ${(item.price * item.selectedQuantity).toFixed(2)}
+                  </div>
+                )}
               </div>
             ))}
           </CardContent>
@@ -175,7 +205,7 @@ const ReceiptDetails = () => {
           <CardContent className="space-y-2">
             <div className="flex justify-between text-sm">
               <span>Subtotal</span>
-              <span>${subtotal.toFixed(2)}</span>
+              <span>${actualSubtotal.toFixed(2)}</span>
             </div>
             <div className="flex justify-between text-sm">
               <span>GST (7%)</span>
@@ -240,7 +270,7 @@ const ReceiptDetails = () => {
               <div className="flex items-center justify-between">
                 <span className="text-sm">You</span>
                 <Badge variant={selectedTotal > 0 ? "default" : "outline"}>
-                  {selectedTotal > 0 ? "Selected" : "Pending"}
+                  {selectedTotal > 0 ? `Selected $${myShare.toFixed(2)}` : "Pending"}
                 </Badge>
               </div>
               <div className="flex items-center justify-between">

@@ -1,4 +1,4 @@
-import { Users, Gift, Target, BarChart3, Bookmark, TrendingUp } from 'lucide-react';
+import { Users, Gift, Target, BarChart3, Bookmark, TrendingUp, Bot } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const FeatureGrid = () => {
@@ -102,6 +102,21 @@ const FeatureGrid = () => {
                 </div>
               </div>
             </div>
+          </div>
+        </div>
+
+        {/* AI Chat Card */}
+        <div 
+          className="col-span-1 bg-surface rounded-3xl p-6 card-hover card-press border border-card-border cursor-pointer"
+          onClick={() => navigate('/ai-chat')}
+        >
+          <div className="flex flex-col items-center text-center">
+            <div className="w-12 h-12 bg-purple-500 rounded-2xl flex items-center justify-center mb-4">
+              <Bot size={24} className="text-white" />
+            </div>
+            <h3 className="font-semibold text-foreground text-sm mb-1">NETS</h3>
+            <h3 className="font-bold text-purple-500 text-base mb-1">AI Chat</h3>
+            <p className="text-xs text-muted-foreground">Get help instantly</p>
           </div>
         </div>
 

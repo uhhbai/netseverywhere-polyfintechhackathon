@@ -28,6 +28,7 @@ import BillSplit from "./pages/BillSplit";
 import BillSplitRequests from "./pages/BillSplitRequests";
 import Transfer from "./pages/Transfer";
 import PointsRedemption from "./pages/PointsRedemption";
+import AiChat from "./pages/AiChat";
 
 const queryClient = new QueryClient();
 
@@ -65,6 +66,7 @@ const App = () => (
             <Route path="/bill-split-requests" element={<BillSplitRequests />} />
             <Route path="/transfer" element={<Transfer />} />
             <Route path="/points" element={<PointsRedemption />} />
+            <Route path="/ai-chat" element={<AiChat />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
