@@ -15,6 +15,8 @@ import {
   Zap,
   Target,
   Receipt,
+  Bot,
+  Speech,
 } from "lucide-react";
 
 const Index = () => {
@@ -312,7 +314,7 @@ const Index = () => {
             <CardContent className="p-6">
               <div className="flex flex-col items-center text-center space-y-3">
                 <div className="w-12 h-12 bg-secondary rounded-full flex items-center justify-center">
-                  <Gift className="h-6 w-6 text-secondary-foreground" />
+                  <Speech className="h-6 w-6 text-secondary-foreground" />
                 </div>
                 <div>
                   <h3 className="font-semibold text-foreground">Referrals</h3>
@@ -332,7 +334,9 @@ const Index = () => {
                   <Users className="h-6 w-6 text-accent-foreground" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-foreground">eNets Transfer</h3>
+                  <h3 className="font-semibold text-foreground">
+                    eNets Transfer
+                  </h3>
                   <p className="text-xs text-muted-foreground">Send money</p>
                 </div>
               </div>
@@ -350,7 +354,47 @@ const Index = () => {
                 </div>
                 <div>
                   <h3 className="font-semibold text-foreground">Points Shop</h3>
-                  <p className="text-xs text-muted-foreground">Redeem rewards</p>
+                  <p className="text-xs text-muted-foreground">
+                    Redeem rewards
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card
+            className="bg-gradient-to-br from-secondary/10 to-primary/10 card-hover cursor-pointer"
+            onClick={() => navigate("/ai-chat")}
+          >
+            <CardContent className="p-6">
+              <div className="flex flex-col items-center text-center space-y-3">
+                <div className="w-12 h-12 bg-secondary rounded-full flex items-center justify-center">
+                  <Bot className="h-6 w-6 text-secondary-foreground" />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-foreground">AI Chatbot</h3>
+                  <p className="text-xs text-muted-foreground">
+                    Ask AI your questions
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card
+            className="bg-gradient-to-br from-accent/10 to-primary/10 card-hover cursor-pointer"
+            onClick={() => navigate("/transfer")}
+          >
+            <CardContent className="p-6">
+              <div className="flex flex-col items-center text-center space-y-3">
+                <div className="w-12 h-12 bg-accent rounded-full flex items-center justify-center">
+                  <Gift className="h-6 w-6 text-accent-foreground" />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-foreground">
+                    Gifting
+                  </h3>
+                  <p className="text-xs text-muted-foreground">Send gifts with messages</p>
                 </div>
               </div>
             </CardContent>
