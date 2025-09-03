@@ -152,7 +152,7 @@ const Leaderboard = () => {
       <div className="mb-4 px-6 text-sm text-muted-foreground">
         <br></br>
         You will receive exclusive rewards for being placed at the top of the
-        leaderboard! The leaderboard resets every week.
+        leaderboard! The leaderboard resets every 2 months.
       </div>
       <div className="p-6 space-y-6 pb-24">
         {/* Tab Selector */}
@@ -223,9 +223,9 @@ const Leaderboard = () => {
                     0
                   } days`}
                 {activeTab === "spending" &&
-                  `$${(
-                    leaderboard.find((u) => u.id === user?.id)?.total_spent || 0
-                  ).toFixed(2)}`}
+                  `${(
+                    leaderboard.find((u) => u.id === user?.id)?.total_spent*10 || 0
+                  )}`}
                 {activeTab === "group_pays" &&
                   `${
                     leaderboard.find((u) => u.id === user?.id)
@@ -264,9 +264,7 @@ const Leaderboard = () => {
                       {activeTab === "streak" &&
                         `${leaderUser.streak_count || 0} day streak`}
                       {activeTab === "spending" &&
-                        `$${(leaderUser.total_spent || 0).toFixed(
-                          2
-                        )} total spent`}
+                        `${(leaderUser.total_spent*10|| 0)} total points`}
                       {activeTab === "group_pays" &&
                         `${leaderUser.group_pay_count || 0} group pays created`}
                       {activeTab === "referrals" &&
