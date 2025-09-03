@@ -161,8 +161,8 @@ const PointsRedemption = () => {
         .eq("user_id", user?.id)
         .maybeSingle();
 
-      if (profile) {
-        setUserPoints(profile.points || 0);
+      if (profile && profile.points !== null && profile.points !== undefined) {
+        setUserPoints(profile.points);
       }
     } catch (error) {
       console.error("Error fetching user points:", error);
@@ -217,10 +217,12 @@ const PointsRedemption = () => {
     try {
       // Deduct points from user profile
       const newPoints = userPoints - offer.points_required;
-      await supabase
+      const { error: updateError } = await supabase
         .from("profiles")
-        .update({ points: newPoints })
+        .update({ points: newPoints } as any)
         .eq("user_id", user?.id);
+
+      if (updateError) throw updateError;
 
       // Generate discount code
       const discountCode = generateDiscountCode(brand.name, offer);

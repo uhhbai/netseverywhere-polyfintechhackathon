@@ -184,6 +184,7 @@ export type Database = {
           id: string
           last_activity_date: string | null
           phone_number: string | null
+          points: number | null
           streak_count: number | null
           total_spent: number | null
           updated_at: string | null
@@ -197,6 +198,7 @@ export type Database = {
           id?: string
           last_activity_date?: string | null
           phone_number?: string | null
+          points?: number | null
           streak_count?: number | null
           total_spent?: number | null
           updated_at?: string | null
@@ -210,6 +212,7 @@ export type Database = {
           id?: string
           last_activity_date?: string | null
           phone_number?: string | null
+          points?: number | null
           streak_count?: number | null
           total_spent?: number | null
           updated_at?: string | null
@@ -453,6 +456,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      check_referral_code_exists: {
+        Args: { p_referral_code: string }
+        Returns: number
+      }
       seed_demo_users: {
         Args: Record<PropertyKey, never>
         Returns: undefined
