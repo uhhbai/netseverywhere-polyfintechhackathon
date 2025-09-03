@@ -99,10 +99,10 @@ const ReceiptDetails = () => {
 
     toast({
       title: "Selection Confirmed! ✓",
-      description: `Your share: $${myShare.toFixed(2)}. Payment successful!`,
+      description: `Your share: $${myShare.toFixed(2)}. Payment made successfully from your primary bank account!`,
     });
     
-    setTimeout(() => navigate(fromPage === 'shared-orders' ? '/shared-orders' : '/receipts'), 1500);
+    setTimeout(() => navigate(fromPage === 'shared-orders' ? '/' : '/'), 1500);
   };
 
   return (

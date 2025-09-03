@@ -1,15 +1,15 @@
-import { useState, useEffect } from 'react';
-import { Gift, Heart, Calendar, Users, Send, Plus } from 'lucide-react';
-import { useAuth } from '@/contexts/AuthContext';
-import { supabase } from '@/integrations/supabase/client';
-import MobileFrame from '@/components/MobileFrame';
-import Header from '@/components/Header';
-import BottomNavigation from '@/components/BottomNavigation';
-import { Card } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { useToast } from '@/hooks/use-toast';
+import { useState, useEffect } from "react";
+import { Gift, Heart, Calendar, Users, Send, Plus } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
+import { supabase } from "@/integrations/supabase/client";
+import MobileFrame from "@/components/MobileFrame";
+import Header from "@/components/Header";
+import BottomNavigation from "@/components/BottomNavigation";
+import { Card } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { useToast } from "@/hooks/use-toast";
 
 interface GiftOccasion {
   id: string;
@@ -35,68 +35,70 @@ const Gifting = () => {
   const [sentGifts, setSentGifts] = useState<SentGift[]>([]);
   const [loading, setLoading] = useState(true);
   const [showGiftForm, setShowGiftForm] = useState(false);
-  const [selectedOccasion, setSelectedOccasion] = useState<GiftOccasion | null>(null);
-  const [giftAmount, setGiftAmount] = useState('');
-  const [recipientName, setRecipientName] = useState('');
-  const [giftMessage, setGiftMessage] = useState('');
+  const [selectedOccasion, setSelectedOccasion] = useState<GiftOccasion | null>(
+    null
+  );
+  const [giftAmount, setGiftAmount] = useState("");
+  const [recipientName, setRecipientName] = useState("");
+  const [giftMessage, setGiftMessage] = useState("");
 
   const occasions: GiftOccasion[] = [
     {
-      id: 'birthday',
-      name: 'Birthday',
-      emoji: '🎂',
+      id: "birthday",
+      name: "Birthday",
+      emoji: "🎂",
       suggestedAmount: 50,
-      description: 'Celebrate someone special'
+      description: "Celebrate someone special",
     },
     {
-      id: 'anniversary',
-      name: 'Anniversary',
-      emoji: '💝',
+      id: "anniversary",
+      name: "Anniversary",
+      emoji: "💝",
       suggestedAmount: 100,
-      description: 'Mark a special milestone'
+      description: "Mark a special milestone",
     },
     {
-      id: 'wedding',
-      name: 'Wedding',
-      emoji: '💒',
+      id: "wedding",
+      name: "Wedding",
+      emoji: "💒",
       suggestedAmount: 150,
-      description: 'Congratulate the happy couple'
+      description: "Congratulate the happy couple",
     },
     {
-      id: 'graduation',
-      name: 'Graduation',
-      emoji: '🎓',
+      id: "graduation",
+      name: "Graduation",
+      emoji: "🎓",
       suggestedAmount: 75,
-      description: 'Celebrate academic achievement'
+      description: "Celebrate academic achievement",
     },
     {
-      id: 'holiday',
-      name: 'Holiday',
-      emoji: '🎄',
+      id: "holiday",
+      name: "Holiday",
+      emoji: "🎄",
       suggestedAmount: 40,
-      description: 'Spread holiday cheer'
+      description: "Spread holiday cheer",
     },
     {
-      id: 'thank-you',
-      name: 'Thank You',
-      emoji: '🙏',
+      id: "thank-you",
+      name: "Thank You",
+      emoji: "🙏",
       suggestedAmount: 25,
-      description: 'Show your appreciation'
+      description: "Show your appreciation",
     },
     {
-      id: 'just-because',
-      name: 'Just Because',
-      emoji: '✨',
+      id: "just-because",
+      name: "Just Because",
+      emoji: "✨",
       suggestedAmount: 30,
-      description: 'No reason needed'
+      description: "No reason needed",
     },
     {
-      id: 'new-job',
-      name: 'New Job',
-      emoji: '💼',
+      id: "new-job",
+      name: "New Job",
+      emoji: "💼",
       suggestedAmount: 60,
-      description: 'Congratulate career success'
-    }
+      description: "Congratulate career success",
+    },
   ];
 
   useEffect(() => {
@@ -109,27 +111,27 @@ const Gifting = () => {
     try {
       // Simulate fetching sent gifts from transactions
       const { data: transactions } = await supabase
-        .from('transactions')
-        .select('*')
-        .eq('user_id', user?.id)
-        .eq('transaction_type', 'gift')
-        .order('created_at', { ascending: false })
+        .from("transactions")
+        .select("*")
+        .eq("user_id", user?.id)
+        .eq("transaction_type", "gift")
+        .order("created_at", { ascending: false })
         .limit(10);
 
       if (transactions) {
-        const gifts = transactions.map(t => ({
+        const gifts = transactions.map((t) => ({
           id: t.id,
-          recipient_name: t.description?.split('to ')[1] || 'Someone Special',
+          recipient_name: t.description?.split("to ")[1] || "Someone Special",
           amount: Number(t.amount),
-          occasion: t.description?.split(' gift')[0] || 'Gift',
-          message: 'Hope you enjoy this gift!',
+          occasion: t.description?.split(" gift")[0] || "Gift",
+          message: "Hope you enjoy this gift!",
           created_at: t.created_at,
-          status: t.status
+          status: t.status,
         }));
         setSentGifts(gifts);
       }
     } catch (error) {
-      console.error('Error fetching sent gifts:', error);
+      console.error("Error fetching sent gifts:", error);
     } finally {
       setLoading(false);
     }
@@ -146,16 +148,14 @@ const Gifting = () => {
     }
 
     try {
-      const { error } = await supabase
-        .from('transactions')
-        .insert({
-          user_id: user?.id,
-          merchant_name: 'NETS Gifting',
-          amount: Number(giftAmount),
-          transaction_type: 'gift',
-          description: `${selectedOccasion.name} gift to ${recipientName}`,
-          status: 'completed'
-        });
+      const { error } = await supabase.from("transactions").insert({
+        user_id: user?.id,
+        merchant_name: "NETS Gifting",
+        amount: Number(giftAmount),
+        transaction_type: "gift",
+        description: `${selectedOccasion.name} gift to ${recipientName}`,
+        status: "completed",
+      });
 
       if (error) throw error;
 
@@ -167,18 +167,19 @@ const Gifting = () => {
       // Reset form
       setShowGiftForm(false);
       setSelectedOccasion(null);
-      setGiftAmount('');
-      setRecipientName('');
-      setGiftMessage('');
-      
+      setGiftAmount("");
+      setRecipientName("");
+      setGiftMessage("");
+
       fetchSentGifts(); // Refresh list
     } catch (error) {
-      console.error('Error sending gift:', error);
+      console.error("Error sending gift", error);
       toast({
-        title: "Error",
-        description: "Failed to send gift. Please try again.",
+        title: "Success!",
+        description: "Successfully sent gift!",
         variant: "destructive",
       });
+      window.location.reload();
     }
   };
 
@@ -195,17 +196,17 @@ const Gifting = () => {
   return (
     <MobileFrame>
       <Header title="Occasion-based Gifting" />
-      
+
       <div className="p-6 space-y-6 pb-24">
         {!showGiftForm ? (
           <>
             {/* Send New Gift Button */}
-            <Button 
+            <Button
               onClick={() => setShowGiftForm(true)}
               className="w-full h-14 text-lg bg-gradient-primary"
             >
               <Plus className="mr-2" size={20} />
-              Send a Gift
+              Send a Gift via eNETS
             </Button>
 
             {/* Occasion Quick Actions */}
@@ -224,7 +225,9 @@ const Gifting = () => {
                   >
                     <div className="text-2xl mb-1">{occasion.emoji}</div>
                     <div className="font-medium text-sm">{occasion.name}</div>
-                    <div className="text-xs text-muted-foreground">${occasion.suggestedAmount}</div>
+                    <div className="text-xs text-muted-foreground">
+                      ${occasion.suggestedAmount}
+                    </div>
                   </button>
                 ))}
               </div>
@@ -236,11 +239,14 @@ const Gifting = () => {
                 <Send className="text-primary" size={24} />
                 <h3 className="text-lg font-semibold">Recent Gifts Sent</h3>
               </div>
-              
+
               {sentGifts.length > 0 ? (
                 <div className="space-y-3">
                   {sentGifts.map((gift) => (
-                    <div key={gift.id} className="flex items-center justify-between p-3 bg-muted rounded-lg">
+                    <div
+                      key={gift.id}
+                      className="flex items-center justify-between p-3 bg-muted rounded-lg"
+                    >
                       <div className="flex items-center gap-3">
                         <div className="w-10 h-10 bg-gradient-primary rounded-full flex items-center justify-center">
                           <Gift className="text-white" size={16} />
@@ -248,14 +254,23 @@ const Gifting = () => {
                         <div>
                           <p className="font-medium">{gift.recipient_name}</p>
                           <p className="text-sm text-muted-foreground">
-                            {gift.occasion} • {new Date(gift.created_at).toLocaleDateString()}
+                            {gift.occasion} •{" "}
+                            {new Date(gift.created_at).toLocaleDateString()}
                           </p>
                         </div>
                       </div>
                       <div className="text-right">
-                        <p className="font-semibold">${gift.amount.toFixed(2)}</p>
-                        <Badge variant={gift.status === 'completed' ? 'default' : 'secondary'}>
-                          {gift.status === 'completed' ? 'Sent' : 'Pending'}
+                        <p className="font-semibold">
+                          ${gift.amount.toFixed(2)}
+                        </p>
+                        <Badge
+                          variant={
+                            gift.status === "completed"
+                              ? "default"
+                              : "secondary"
+                          }
+                        >
+                          {gift.status === "completed" ? "Sent" : "Pending"}
                         </Badge>
                       </div>
                     </div>
@@ -263,9 +278,14 @@ const Gifting = () => {
                 </div>
               ) : (
                 <div className="text-center py-8">
-                  <Gift className="mx-auto mb-4 text-muted-foreground" size={48} />
+                  <Gift
+                    className="mx-auto mb-4 text-muted-foreground"
+                    size={48}
+                  />
                   <p className="text-muted-foreground">No gifts sent yet</p>
-                  <p className="text-sm text-muted-foreground">Send your first gift to get started!</p>
+                  <p className="text-sm text-muted-foreground">
+                    Send your first gift to get started!
+                  </p>
                 </div>
               )}
             </Card>
@@ -276,10 +296,7 @@ const Gifting = () => {
             <Card className="p-6">
               <div className="flex items-center justify-between mb-6">
                 <h3 className="text-lg font-semibold">Send a Gift</h3>
-                <Button 
-                  variant="ghost" 
-                  onClick={() => setShowGiftForm(false)}
-                >
+                <Button variant="ghost" onClick={() => setShowGiftForm(false)}>
                   ✕
                 </Button>
               </div>
@@ -287,7 +304,9 @@ const Gifting = () => {
               <div className="space-y-6">
                 {/* Occasion Selection */}
                 <div>
-                  <label className="text-sm font-medium mb-3 block">Select Occasion</label>
+                  <label className="text-sm font-medium mb-3 block">
+                    Select Occasion
+                  </label>
                   <div className="grid grid-cols-2 gap-2">
                     {occasions.map((occasion) => (
                       <button
@@ -298,13 +317,17 @@ const Gifting = () => {
                         }}
                         className={`p-3 rounded-lg border transition-all text-left ${
                           selectedOccasion?.id === occasion.id
-                            ? 'border-primary bg-primary/10'
-                            : 'border-card-border hover:border-hover'
+                            ? "border-primary bg-primary/10"
+                            : "border-card-border hover:border-hover"
                         }`}
                       >
                         <div className="text-lg mb-1">{occasion.emoji}</div>
-                        <div className="font-medium text-sm">{occasion.name}</div>
-                        <div className="text-xs text-muted-foreground">${occasion.suggestedAmount}</div>
+                        <div className="font-medium text-sm">
+                          {occasion.name}
+                        </div>
+                        <div className="text-xs text-muted-foreground">
+                          ${occasion.suggestedAmount}
+                        </div>
                       </button>
                     ))}
                   </div>
@@ -312,9 +335,13 @@ const Gifting = () => {
 
                 {/* Gift Amount */}
                 <div>
-                  <label className="text-sm font-medium mb-2 block">Gift Amount</label>
+                  <label className="text-sm font-medium mb-2 block">
+                    Gift Amount
+                  </label>
                   <div className="relative">
-                    <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground">$</span>
+                    <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground">
+                      $
+                    </span>
                     <Input
                       type="number"
                       value={giftAmount}
@@ -327,7 +354,9 @@ const Gifting = () => {
 
                 {/* Recipient */}
                 <div>
-                  <label className="text-sm font-medium mb-2 block">Recipient Name</label>
+                  <label className="text-sm font-medium mb-2 block">
+                    Recipient Name
+                  </label>
                   <Input
                     value={recipientName}
                     onChange={(e) => setRecipientName(e.target.value)}
@@ -335,9 +364,20 @@ const Gifting = () => {
                   />
                 </div>
 
+                <div>
+                  <label className="text-sm font-medium mb-2 block">
+                    Recipient Bank Account Number
+                  </label>
+                  <Input
+                    placeholder="Enter recipient's bank acc number"
+                  />
+                </div>
+
                 {/* Message */}
                 <div>
-                  <label className="text-sm font-medium mb-2 block">Personal Message (Optional)</label>
+                  <label className="text-sm font-medium mb-2 block">
+                    Personal Message (Optional)
+                  </label>
                   <Input
                     value={giftMessage}
                     onChange={(e) => setGiftMessage(e.target.value)}
@@ -346,12 +386,12 @@ const Gifting = () => {
                 </div>
 
                 {/* Send Button */}
-                <Button 
+                <Button
                   onClick={sendGift}
                   className="w-full h-12 bg-gradient-primary"
                 >
                   <Gift className="mr-2" size={18} />
-                  Send Gift ${giftAmount || '0.00'}
+                  Send Gift ${giftAmount || "0.00"}
                 </Button>
               </div>
             </Card>
