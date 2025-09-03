@@ -17,6 +17,9 @@ import {
   Receipt,
   Bot,
   Speech,
+  Check,
+  Hand,
+  ChartArea,
 } from "lucide-react";
 
 const Index = () => {
@@ -289,6 +292,43 @@ const Index = () => {
           </Card>
 
           <Card
+            className="bg-gradient-to-br from-primary/10 to-accent/10 card-hover cursor-pointer"
+            onClick={() => navigate("/challenges")}
+          >
+            <CardContent className="p-6">
+              <div className="flex flex-col items-center text-center space-y-3">
+                <div className="w-12 h-12 bg-primary rounded-full flex items-center justify-center">
+                  <Hand className="h-6 w-6 text-primary-foreground" />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-foreground">Challenges</h3>
+                  <p className="text-xs text-muted-foreground">Win points</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card
+            className="bg-gradient-to-br from-accent/10 to-secondary/10 card-hover cursor-pointer"
+            onClick={() => navigate("/analytics")}
+          >
+            <CardContent className="p-6">
+              <div className="flex flex-col items-center text-center space-y-3">
+                <div className="w-12 h-12 bg-accent rounded-full flex items-center justify-center">
+                  <ChartArea className="h-6 w-6 text-accent-foreground" />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-foreground">
+                    User analytics
+                  </h3>
+                  <p className="text-xs text-muted-foreground">
+                    Track your spending
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+          <Card
             className="bg-gradient-to-br from-accent/10 to-secondary/10 card-hover cursor-pointer"
             onClick={() => navigate("/receipts")}
           >
@@ -391,10 +431,10 @@ const Index = () => {
                   <Gift className="h-6 w-6 text-accent-foreground" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-foreground">
-                    Gifting
-                  </h3>
-                  <p className="text-xs text-muted-foreground">Send gifts with messages</p>
+                  <h3 className="font-semibold text-foreground">Gifting</h3>
+                  <p className="text-xs text-muted-foreground">
+                    Send gifts with messages
+                  </p>
                 </div>
               </div>
             </CardContent>
